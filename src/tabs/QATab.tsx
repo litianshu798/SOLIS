@@ -44,11 +44,13 @@ export default function QATab() {
 
     try {
       const context = `Today: ${images.length} photos, ${audios.length} audio recordings captured by wearable device.`
-      const answer = await chatWithMemory(q, context)
+      const answer = await chatWithMemory(q, context, todayStr())
       const t = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
       setMessages((m) => [...m, { role: 'ai', text: answer, time: t }])
-    } catch {
-      setMessages((m) => [...m, { role: 'ai', text: 'Sorry, something went wrong.', time: now }])
+    } catch (error) {
+      const t = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+      const errorMsg = error instanceof Error ? error.message : 'Sorry, something went wrong.'
+      setMessages((m) => [...m, { role: 'ai', text: errorMsg, time: t }])
     } finally {
       setLoading(false)
     }

@@ -109,21 +109,43 @@ export async function getMyRecords(): Promise<any[]> {
   return res.json()
 }
 
-// ===== Chat (mock for now - will call LLM directly or backend) =====
+// ===== Chat with Memory Assistant =====
 
-export async function chatWithMemory(question: string, context: string): Promise<string> {
-  // For now, use the backend's AI service through generate
-  // In production, this would call POST /memory/chat
-  // Mock response for demo
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (context) {
-        resolve(`Based on the recordings, ${question.includes('today') || question.includes('today') ? "today you" : "you"} had an eventful day. The AI captured multiple moments throughout the day. Here's what I found in the data...`)
-      } else {
-        resolve("I don't have enough data for that date yet. Make sure the device is capturing and uploading data.")
-      }
-    }, 1500)
+export interface ChatRequest {
+  question: string
+  date?: string
+  context?: string
+}
+
+export interface ChatResponse {
+  question: string
+  answer: string
+  sources?: Array<{
+    type: 'image' | 'audio' | 'memory'
+    url?: string
+    timestamp: string
+  }>
+}
+
+export async function chatWithMemory(question: string, context?: string, date?: string): Promise<string> {
+  const req: ChatRequest = {
+    question,
+    date: date || todayStr(),
+    context,
+  }
+
+  const res = await fetch(`${BASE}/memory/chat`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(req),
   })
+
+  if (!res.ok) {
+    throw new Error(`Chat API error: ${res.statusText}`)
+  }
+
+  const data: ChatResponse = await res.json()
+  return data.answer
 }
 
 // ===== Helpers =====
