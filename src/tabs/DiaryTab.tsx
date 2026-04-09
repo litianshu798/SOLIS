@@ -15,7 +15,11 @@ import {
 
 type TimelineItem = { type: 'image' | 'audio'; obj: OSSObject; time: string }
 
-export default function DiaryTab() {
+interface Props {
+  onOpenCinema: () => void
+}
+
+export default function DiaryTab({ onOpenCinema }: Props) {
   const [date, setDate] = useState(todayStr())
   const [generating, setGenerating] = useState(false)
   const [clipResult, setClipResult] = useState<Clip | null>(null)
@@ -32,12 +36,13 @@ export default function DiaryTab() {
   const timeline: TimelineItem[] = [
     ...images.map((img) => ({ type: 'image' as const, obj: img, time: extractTime(img.name) })),
     ...audios.map((aud) => ({ type: 'audio' as const, obj: aud, time: extractTime(aud.name) })),
-  ].sort((a, b) => a.obj.name.localeCompare(b.obj.name))
+  ].sort((a, b) => getSortTimestamp(b.obj) - getSortTimestamp(a.obj))
 
   const summaryText = clipResult?.result?.summary || null
 
   const handleGenerate = async () => {
     setGenerating(true)
+    onOpenCinema()
     try {
       const result = await generateClip(date)
       setClipResult(result)
@@ -136,6 +141,16 @@ export default function DiaryTab() {
       )}
     </div>
   )
+}
+
+function getSortTimestamp(obj: OSSObject): number {
+  const filename = obj.name.split('/').pop() || ''
+  const tsMatch = filename.match(/^(\d{13})-/)
+  if (tsMatch) return Number(tsMatch[1])
+
+  const lastModifiedTs = Date.parse(obj.lastModified || '')
+  if (!Number.isNaN(lastModifiedTs)) return lastModifiedTs
+  return 0
 }
 
 function TimelineRow({ item, index, onImageClick }: { item: TimelineItem; index: number; onImageClick: (url: string) => void }) {

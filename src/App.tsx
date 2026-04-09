@@ -9,5 +9,5 @@ export default function App() {
     return <Landing onStart={() => setStarted(true)} />
   }
 
-  return <Main />
+  return <Main onGoHome={() => setStarted(false)} />
 }

@@ -38,7 +38,11 @@ const tabs = [
 
 type TabId = typeof tabs[number]['id']
 
-export default function Main() {
+interface Props {
+  onGoHome: () => void
+}
+
+export default function Main({ onGoHome }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('diary')
   const active = tabs.find((tab) => tab.id === activeTab)!
 
@@ -58,10 +62,16 @@ export default function Main() {
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
                 <div className="section-label">Solis Studio</div>
-                <div className="mt-1.5 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={onGoHome}
+                  className="mt-1.5 flex items-center gap-3 rounded-xl transition-opacity hover:opacity-80"
+                  aria-label="Back to Solis home"
+                  title="Back to home"
+                >
                   <img src={solisLogo} alt="Solis logo" className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-md shadow-black/15 object-cover" />
                   <div className="font-serif text-[2.15rem] md:text-[2.7rem] leading-none text-[var(--text-strong)]">Solis</div>
-                </div>
+                </button>
               </div>
               <div className="chip rounded-full px-4 py-2 text-[13px] md:text-[14px] font-bold w-fit">
                 Active: {active.label}
@@ -89,7 +99,7 @@ export default function Main() {
         <main className="flex-1 min-h-0 pt-2 md:pt-3 pb-[max(0.45rem,env(safe-area-inset-bottom))]">
           <div className="surface-panel h-full rounded-[1.5rem] overflow-hidden">
             <div className={activeTab === 'diary' ? 'h-full' : 'hidden'}>
-              <DiaryTab />
+              <DiaryTab onOpenCinema={() => setActiveTab('video')} />
             </div>
             <div className={activeTab === 'qa' ? 'h-full' : 'hidden'}>
               <QATab />
