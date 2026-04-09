@@ -49,8 +49,7 @@ export default function QATab() {
     setLoading(true)
 
     try {
-      const context = `Today capture stats: ${images.length} photos and ${audios.length} audio recordings.`
-      const answer = await chatWithMemory(question, context, todayStr())
+      const answer = await chatWithMemory(question, undefined, todayStr())
       const t = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
       setMessages((prev) => [...prev, { role: 'ai', text: answer, time: t }])
     } catch (error) {
