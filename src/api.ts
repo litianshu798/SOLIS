@@ -1,6 +1,7 @@
 const BASE = '/api'
 const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVzcDMyX2NhbSIsInN1YiI6MiwiaWF0IjoxNzc1NjM1ODI2LCJleHAiOjE3NzYyNDA2MjZ9.jEzSOY3e7f3PsfnXwXt8gnvE4SWOH7Yvpv_hpbkAOSk'
 const USER_ID = 2
+const DEVICE_UUID = 'esp32-device-001'
 
 const headers = () => ({
   Authorization: `Bearer ${TOKEN}`,
@@ -23,11 +24,30 @@ export interface FileList {
 }
 
 export async function listFiles(date: string): Promise<FileList> {
-  const prefix = `user/${USER_ID}/${date}/`
+  // 设备上传到 user/{DEVICE_UUID}/ (无日期子目录)，按文件名时间戳过滤日期
+  const prefix = `user/${DEVICE_UUID}/`
   const res = await fetch(`${BASE}/storage/list?prefix=${encodeURIComponent(prefix)}`, {
     headers: headers(),
   })
-  return res.json()
+  const data: FileList = await res.json()
+  if (!data.success || !data.objects) return data
+
+  // 按日期过滤：文件名前缀是毫秒时间戳，转换后比较日期
+  const dateCompact = date.replace(/-/g, '') // "2026-04-09" → "20260409"
+  data.objects = data.objects.filter(obj => {
+    const filename = obj.name.split('/').pop() || ''
+    // 方式1: 文件名中包含日期 (如 cap_20260409_085634.jpg)
+    if (filename.includes(dateCompact)) return true
+    // 方式2: 用前缀时间戳判断日期
+    const tsMatch = filename.match(/^(\d{13})-/)
+    if (tsMatch) {
+      const d = new Date(parseInt(tsMatch[1]))
+      const fileDate = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`
+      return fileDate === dateCompact
+    }
+    return false
+  })
+  return data
 }
 
 // Classify OSS objects
