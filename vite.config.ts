@@ -5,7 +5,10 @@ import type { Plugin } from 'vite'
 
 // OSS signing proxy plugin
 function ossProxy(): Plugin {
-  let ossClient: any = null
+  type OssClient = {
+    signatureUrl: (filePath: string, options: { expires: number }) => string
+  }
+  let ossClient: OssClient | null = null
 
   const getClient = async () => {
     if (ossClient) return ossClient
@@ -15,7 +18,7 @@ function ossProxy(): Plugin {
       accessKeyId: 'LTAI5t9dLA4XBngXqvVhBxq6',
       accessKeySecret: 'xa2BfnrGDwSyDOCgBFqfUraHGwBVzp',
       bucket: 'vibe01china',
-    })
+    }) as OssClient
     return ossClient
   }
 
@@ -31,10 +34,11 @@ function ossProxy(): Plugin {
           const signedUrl = client.signatureUrl(filePath, { expires: 3600 })
           res.writeHead(302, { Location: signedUrl })
           res.end()
-        } catch (e: any) {
-          console.error('[OSS Proxy]', e.message)
+        } catch (e: unknown) {
+          const message = e instanceof Error ? e.message : 'Unknown OSS proxy error'
+          console.error('[OSS Proxy]', message)
           res.writeHead(500)
-          res.end(e.message)
+          res.end(message)
         }
       })
     },

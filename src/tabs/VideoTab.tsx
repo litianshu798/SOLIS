@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { listFiles, classifyFiles, getFileUrl, todayStr } from '../api'
+import { listFiles, classifyFiles, getFileUrl, todayStr, type OSSObject } from '../api'
 
 const styles = [
-  { id: 'cinematic', label: 'Cinematic', desc: 'Film-like color grading' },
-  { id: 'vlog', label: 'Vlog', desc: 'Fast-paced & fun' },
-  { id: 'artistic', label: 'Artistic', desc: 'Vivid & expressive' },
+  { id: 'cinematic', label: 'Cinematic', desc: 'soft contrast, warm grain' },
+  { id: 'vlog', label: 'Vlog', desc: 'faster cuts, bright energy' },
+  { id: 'artistic', label: 'Artistic', desc: 'color pushed, expressive' },
 ]
 
 export default function VideoTab() {
@@ -21,150 +21,165 @@ export default function VideoTab() {
 
   const { images } = data ? classifyFiles(data.objects) : { images: [] }
 
+  const stageText = useMemo(() => {
+    if (progress < 25) return 'Analyzing captured timeline...'
+    if (progress < 55) return 'Extracting emotional beats...'
+    if (progress < 80) return 'Matching visual style...'
+    return 'Rendering preview sequence...'
+  }, [progress])
+
   const handleGenerate = () => {
-    if (images.length === 0) return
+    if (images.length === 0 || generating) return
+
     setGenerating(true)
     setProgress(0)
     setShowSlideshow(false)
 
-    const interval = setInterval(() => {
-      setProgress((p) => {
-        if (p >= 100) {
-          clearInterval(interval)
+    const interval = window.setInterval(() => {
+      setProgress((value) => {
+        const next = value + 2
+        if (next >= 100) {
+          window.clearInterval(interval)
           setGenerating(false)
           setShowSlideshow(true)
           return 100
         }
-        return p + 2
+        return next
       })
-    }, 80)
+    }, 85)
   }
+
+  const steps = [
+    { label: 'Timeline Scan', done: progress >= 20 },
+    { label: 'Story Arc', done: progress >= 55 },
+    { label: 'Style Render', done: progress >= 85 },
+  ]
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
-      <div className="shrink-0 px-5 py-4 bg-white/60 backdrop-blur-sm border-b border-stone-200/40">
-        <div className="font-serif text-lg font-semibold text-stone-800">AI Cinema</div>
-        <div className="text-[11px] text-stone-400 mt-0.5 font-light">
-          Transform your day into a cinematic experience
+      <header className="shrink-0 px-4 py-3 border-b border-[var(--line)] bg-white/55 backdrop-blur-sm">
+        <div className="section-label">Cinema Generator</div>
+        <div className="mt-1.5 flex items-center justify-between">
+          <h2 className="font-serif text-[1.7rem] leading-none text-[var(--text-strong)]">Direct A Cut</h2>
+          <div className="chip rounded-full px-2.5 py-1 text-[11px] font-semibold">{images.length} frames</div>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 overflow-y-auto px-5 py-5">
-        {/* Video Player / Slideshow */}
-        <div className="aspect-video rounded-2xl overflow-hidden bg-stone-100 border border-stone-200/60 shadow-sm mb-6">
-          {showSlideshow ? (
-            <Slideshow images={images} style={style} />
-          ) : generating ? (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-white">
-              <div className="w-10 h-10 rounded-full border-2 border-stone-200 border-t-orange-500 animate-spin" />
-              <div className="text-sm text-stone-400 font-light">Creating your {style} film...</div>
-              <div className="w-48 h-1.5 rounded-full bg-stone-100 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-full transition-all duration-200"
-                  style={{ width: `${progress}%` }}
-                />
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="surface-panel-strong rounded-2xl overflow-hidden">
+          <div className="aspect-video bg-[rgba(32,24,16,0.08)] relative">
+            {showSlideshow ? (
+              <Slideshow images={images} style={style} />
+            ) : generating ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
+                <div className="w-11 h-11 rounded-full border-2 border-[rgba(109,88,67,0.22)] border-t-[var(--accent)] animate-spin" />
+                <div className="mt-3 text-sm text-[var(--text-strong)]">{stageText}</div>
+                <div className="mt-3 w-full max-w-[220px] h-1.5 rounded-full bg-[rgba(109,88,67,0.12)] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[var(--accent)] origin-left"
+                    style={{ width: `${progress}%`, animation: 'pulseBar 1.8s ease-in-out infinite' }}
+                  />
+                </div>
+                <div className="mt-2 text-[11px] tabular-nums text-[var(--text-muted)]">{progress}%</div>
               </div>
-              <div className="text-xs text-stone-300 tabular-nums">{progress}%</div>
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--text-muted)]">
+                <svg className="w-10 h-10 mb-2 opacity-65" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.4}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75A2.25 2.25 0 016 4.5h12a2.25 2.25 0 012.25 2.25v10.5A2.25 2.25 0 0118 19.5H6a2.25 2.25 0 01-2.25-2.25V6.75z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25v7.5l6-3.75-6-3.75z" />
+                </svg>
+                <div className="text-xs">Generate a preview from today's captures</div>
+              </div>
+            )}
+          </div>
+          <div className="px-3.5 py-3 border-t border-[var(--line)] bg-white/70">
+            <div className="grid grid-cols-3 gap-2 text-[11px]">
+              {steps.map((step) => (
+                <div key={step.label} className={`rounded-lg px-2 py-1.5 border ${step.done ? 'bg-[var(--accent-soft)] border-[rgba(200,122,55,0.35)] text-[var(--text-strong)]' : 'border-[var(--line)] text-[var(--text-muted)]'}`}>
+                  {step.label}
+                </div>
+              ))}
             </div>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-stone-300 bg-white">
-              <svg className="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
-              </svg>
-              <span className="text-xs font-light">Your film will appear here</span>
-            </div>
-          )}
+          </div>
         </div>
 
-        {/* Photo Grid */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-xs text-stone-500 font-medium">Today's Footage</div>
-            <div className="text-xs text-stone-400">{images.length} shots</div>
+        <section className="mt-5">
+          <div className="section-label mb-2">Style Direction</div>
+          <div className="grid grid-cols-1 gap-2.5">
+            {styles.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setStyle(s.id)}
+                className={`text-left rounded-xl px-3.5 py-3 border transition-all ${
+                  style === s.id
+                    ? 'bg-[var(--accent-soft)] border-[rgba(200,122,55,0.35)]'
+                    : 'chip hover:border-[rgba(109,88,67,0.34)]'
+                }`}
+              >
+                <div className="font-semibold text-[var(--text-strong)]">{s.label}</div>
+                <div className="text-[11px] mt-1 text-[var(--text-muted)]">{s.desc}</div>
+              </button>
+            ))}
           </div>
+        </section>
+
+        <section className="mt-5">
+          <div className="section-label mb-2">Captured Frames</div>
           {images.length > 0 ? (
             <div className="grid grid-cols-4 gap-2">
-              {images.slice(0, 12).map((img, i) => (
+              {images.slice(0, 12).map((img, index) => (
                 <div
                   key={img.name}
-                  className="aspect-square rounded-xl overflow-hidden shadow-sm border border-stone-200/40"
+                  className="rounded-xl overflow-hidden border border-white/70 shadow-sm shadow-black/5"
                   style={{
-                    animation: 'scaleIn 0.4s ease-out forwards',
-                    animationDelay: `${i * 40}ms`,
+                    animation: 'scaleIn 0.35s ease-out forwards',
+                    animationDelay: `${index * 34}ms`,
                     opacity: 0,
                   }}
                 >
                   <img
                     src={getFileUrl(img)}
                     alt=""
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                     loading="lazy"
+                    className="w-full aspect-square object-cover transition-transform duration-500 hover:scale-110"
                   />
                 </div>
               ))}
-              {images.length > 12 && (
-                <div className="aspect-square rounded-xl bg-stone-100 flex items-center justify-center text-xs text-stone-400 font-medium border border-stone-200/40">
-                  +{images.length - 12}
-                </div>
-              )}
             </div>
           ) : (
-            <div className="text-center py-10 text-stone-300 text-xs font-light">
-              No footage captured yet
-            </div>
+            <div className="chip rounded-xl px-3 py-4 text-center text-xs">No captures available yet.</div>
           )}
-        </div>
+        </section>
 
-        {/* Style Selector */}
-        <div className="mb-6">
-          <div className="text-xs text-stone-500 font-medium mb-3">Style</div>
-          <div className="flex gap-2">
-            {styles.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setStyle(s.id)}
-                className={`flex-1 flex flex-col items-center gap-1 py-3.5 rounded-xl border transition-all ${
-                  style === s.id
-                    ? 'bg-orange-50 border-orange-300 text-orange-600 shadow-sm'
-                    : 'bg-white border-stone-200/60 text-stone-400 hover:text-stone-600 hover:border-stone-300'
-                }`}
-              >
-                <span className="text-xs font-semibold">{s.label}</span>
-                <span className="text-[9px] font-light">{s.desc}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Generate Button */}
         <button
           onClick={handleGenerate}
           disabled={generating || images.length === 0}
-          className="w-full py-4 rounded-full bg-stone-800 hover:bg-stone-900 text-white text-base font-medium shadow-lg shadow-stone-800/15 hover:shadow-xl hover:shadow-stone-800/20 transition-all disabled:opacity-20 disabled:hover:bg-stone-800 mb-10"
+          className="mt-6 mb-6 w-full rounded-full py-3.5 bg-[var(--text-strong)] text-white font-semibold shadow-lg shadow-black/15 disabled:opacity-30 transition-all hover:-translate-y-0.5"
         >
-          {generating ? 'Creating...' : 'Generate Film'}
+          {generating ? 'Generating Preview...' : 'Generate Film Preview'}
         </button>
       </div>
     </div>
   )
 }
 
-function Slideshow({ images, style }: { images: any[]; style: string }) {
-  const [idx, setIdx] = useState(0)
+function Slideshow({ images, style }: { images: OSSObject[]; style: string }) {
+  const [index, setIndex] = useState(0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIdx((i) => (i + 1) % images.length)
-    }, style === 'cinematic' ? 4000 : style === 'vlog' ? 2000 : 3000)
-    return () => clearInterval(interval)
+    if (images.length === 0) return
+    const delay = style === 'cinematic' ? 3800 : style === 'vlog' ? 2100 : 2900
+    const timer = window.setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length)
+    }, delay)
+    return () => window.clearInterval(timer)
   }, [images.length, style])
 
   const filterStyle = style === 'artistic'
     ? 'saturate-150 contrast-110'
     : style === 'cinematic'
-    ? 'saturate-75 contrast-125'
-    : ''
+      ? 'saturate-80 contrast-120'
+      : ''
 
   return (
     <div className="relative w-full h-full bg-black">
@@ -173,29 +188,29 @@ function Slideshow({ images, style }: { images: any[]; style: string }) {
           key={img.name}
           className={`absolute inset-0 transition-opacity ${filterStyle}`}
           style={{
-            opacity: i === idx ? 1 : 0,
-            transitionDuration: style === 'cinematic' ? '2s' : '0.5s',
+            opacity: i === index ? 1 : 0,
+            transitionDuration: style === 'cinematic' ? '1.7s' : '0.48s',
           }}
         >
           <img
             src={getFileUrl(img)}
             alt=""
             className="w-full h-full object-cover"
-            style={{
-              animation: i === idx ? 'kenburns1 8s ease-in-out infinite alternate' : 'none',
-            }}
+            style={{ animation: i === index ? 'kenburns1 8s ease-in-out infinite alternate' : 'none' }}
           />
         </div>
       ))}
+
       {style === 'cinematic' && (
         <>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
-          <div className="absolute top-0 left-0 right-0 h-[8%] bg-black" />
-          <div className="absolute bottom-0 left-0 right-0 h-[8%] bg-black" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/28 pointer-events-none" />
+          <div className="absolute top-0 left-0 right-0 h-[9%] bg-black" />
+          <div className="absolute bottom-0 left-0 right-0 h-[9%] bg-black" />
         </>
       )}
-      <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-md bg-black/50 text-[10px] text-white/70 tabular-nums backdrop-blur-sm">
-        {idx + 1} / {images.length}
+
+      <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-md bg-black/50 text-[10px] text-white/75 tabular-nums backdrop-blur-sm">
+        {index + 1} / {images.length}
       </div>
     </div>
   )

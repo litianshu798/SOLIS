@@ -1,6 +1,5 @@
 const BASE = '/api'
 const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVzcDMyX2NhbSIsInN1YiI6MiwiaWF0IjoxNzc1NjM1ODI2LCJleHAiOjE3NzYyNDA2MjZ9.jEzSOY3e7f3PsfnXwXt8gnvE4SWOH7Yvpv_hpbkAOSk'
-const USER_ID = 2
 const DEVICE_UUID = 'esp32-device-001'
 
 const headers = () => ({
@@ -105,10 +104,10 @@ export interface ClipResult {
 }
 
 export interface Clip {
-  id: number
+  id: string
   userId: number
   date: string
-  status: 'processing' | 'completed' | 'failed'
+  status: 'processing' | 'generating' | 'completed' | 'failed'
   result: ClipResult | null
   createdAt: string
 }
@@ -122,7 +121,7 @@ export async function generateClip(date: string): Promise<Clip> {
   return res.json()
 }
 
-export async function getMyRecords(): Promise<any[]> {
+export async function getMyRecords(): Promise<Clip[]> {
   const res = await fetch(`${BASE}/record/my-records`, {
     headers: headers(),
   })
