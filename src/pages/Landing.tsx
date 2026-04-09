@@ -1,25 +1,14 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { listFiles, classifyFiles, getFileUrl, todayStr, formatDate } from '../api'
-import solisLogo from '../assets/solis-logo.svg'
+import { classifyFiles, formatDate, getFileUrl, listFiles, todayStr } from '../api'
 
 interface Props {
   onStart: () => void
 }
 
-const TOTAL_PAGES = 3
-const CORNER_SLOTS = [
-  'left-5 top-5 -rotate-[7deg] sm:left-8 sm:top-8 lg:left-10 lg:top-10',
-  'right-5 top-5 rotate-[6deg] sm:right-8 sm:top-8 lg:right-10 lg:top-10',
-  'left-5 bottom-5 rotate-[5deg] sm:left-8 sm:bottom-8 lg:left-10 lg:bottom-10',
-  'right-5 bottom-5 -rotate-[6deg] sm:right-8 sm:bottom-8 lg:right-10 lg:bottom-10',
-] as const
-
 export default function Landing({ onStart }: Props) {
   const [show, setShow] = useState(false)
   const [leaving, setLeaving] = useState(false)
-  const [activePage, setActivePage] = useState(0)
-  const scrollerRef = useRef<HTMLDivElement>(null)
   const today = todayStr()
 
   const { data } = useQuery({
@@ -28,309 +17,255 @@ export default function Landing({ onStart }: Props) {
   })
 
   const { images, audios } = data ? classifyFiles(data.objects) : { images: [], audios: [] }
-  const previewImages = [...images].slice(-6).reverse()
-  const sectionPaddingStyle = {
-    paddingTop: 'calc(5.7rem + env(safe-area-inset-top))',
-    paddingBottom: 'calc(6.9rem + env(safe-area-inset-bottom))',
-    paddingInlineStart: 'max(1.5rem, calc(env(safe-area-inset-left) + 1.2rem))',
-    paddingInlineEnd: 'max(1.5rem, calc(env(safe-area-inset-right) + 1.2rem))',
-  }
+  const imageUrls = useMemo(() => images.map((img) => getFileUrl(img)), [images])
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShow(true), 120)
     return () => window.clearTimeout(timer)
   }, [])
 
-  useEffect(() => {
-    const scroller = scrollerRef.current
-    if (!scroller) return
-    const onScroll = () => {
-      const height = Math.max(scroller.clientHeight, 1)
-      const nextPage = Math.round(scroller.scrollTop / height)
-      const safe = Math.max(0, Math.min(TOTAL_PAGES - 1, nextPage))
-      setActivePage((prev) => (prev === safe ? prev : safe))
-    }
-    scroller.addEventListener('scroll', onScroll, { passive: true })
-    return () => scroller.removeEventListener('scroll', onScroll)
-  }, [])
-
   const handleStart = () => {
     setLeaving(true)
-    window.setTimeout(onStart, 520)
-  }
-
-  const jumpToPage = (page: number) => {
-    const scroller = scrollerRef.current
-    if (!scroller) return
-    const safe = Math.max(0, Math.min(TOTAL_PAGES - 1, page))
-    scroller.scrollTo({ top: safe * scroller.clientHeight, behavior: 'smooth' })
-    setActivePage(safe)
+    window.setTimeout(onStart, 460)
   }
 
   return (
-    <div className={`relative h-full w-full overflow-hidden transition-all duration-700 ${leaving ? 'scale-105 opacity-0' : ''}`}>
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(circle at 12% 10%, rgba(93,143,255,0.24), transparent 30%), radial-gradient(circle at 84% 16%, rgba(73,199,174,0.22), transparent 34%), linear-gradient(165deg, #081724 0%, #0d1f31 48%, #11263a 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(163,205,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(163,205,255,0.12) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-        }}
-      />
-      {/* noise grain overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          opacity: 0.038,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")`,
-        }}
-      />
-      <header
-        className="absolute top-0 inset-x-0 z-30 flex items-center justify-between"
-        style={{
-          paddingInlineStart: 'max(1.5rem, calc(env(safe-area-inset-left) + 1.2rem))',
-          paddingInlineEnd: 'max(1.5rem, calc(env(safe-area-inset-right) + 1.2rem))',
-          paddingTop: 'env(safe-area-inset-top)',
-          height: 'calc(4rem + env(safe-area-inset-top))',
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => jumpToPage(0)}
-          className="flex items-center gap-2.5"
-        >
-          <img src={solisLogo} alt="Solis logo" className="w-7 h-7 rounded-md object-cover" />
-          <span className="text-[1.28rem] font-extrabold tracking-[0.02em] text-white">Solis</span>
-        </button>
-        <button
-          type="button"
-          onClick={handleStart}
-          className="ios26-top-btn"
-        >
-          START
-        </button>
-      </header>
+    <div className={`h-full w-full overflow-y-auto hide-scrollbar bg-[#fefcf4] text-[#373930] transition-all duration-500 ${leaving ? 'opacity-0 scale-[1.01]' : ''}`}>
+      <nav className="sticky top-0 z-50 border-b border-[#ebe8dc] bg-[#fefcf4]/82 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-14 py-6 flex items-center justify-between gap-4">
+          <a className="text-[1.9rem] italic text-[#5f4a50]" style={{ fontFamily: 'Newsreader, serif' }} href="#">
+            Solis
+          </a>
 
-      <main
-        ref={scrollerRef}
-        className="relative z-10 h-full w-full overflow-y-auto overscroll-y-contain snap-y snap-mandatory hide-scrollbar"
-      >
-        <section
-          className="snap-start min-h-[100svh] w-full flex items-start lg:items-center"
-          style={sectionPaddingStyle}
-        >
+          <div className="hidden md:flex items-center gap-8 text-[13px] tracking-[0.08em]">
+            <a className="text-[#855863] font-semibold border-b border-[#c9a9b1] pb-0.5" href="#">Journal</a>
+            <a className="text-[#7b7c72] hover:text-[#855863] transition-colors" href="#">Cinema</a>
+            <a className="text-[#7b7c72] hover:text-[#855863] transition-colors" href="#">Memory AI</a>
+          </div>
+
+          <button
+            onClick={handleStart}
+            className="rounded-full px-10 md:px-14 py-5 min-h-[4rem] min-w-[11.5rem] md:min-w-[16rem] text-base font-medium tracking-wide text-white bg-gradient-to-br from-[#6a6362] to-[#807876] hover:opacity-90 transition-opacity"
+          >
+            Start Capturing
+          </button>
+        </div>
+      </nav>
+
+      <main className="pt-32 pb-8">
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-14 mb-32 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <div
-            className="relative w-full max-w-5xl mx-auto min-h-[560px] sm:min-h-[640px] lg:min-h-[680px] flex items-center justify-center transition-all duration-1000"
+            className="lg:col-span-7 flex flex-col items-center text-center gap-7"
             style={{
               opacity: show ? 1 : 0,
-              transform: show ? 'translateY(0)' : 'translateY(28px)',
+              transform: show ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 560ms ease, transform 560ms ease',
             }}
           >
-            {previewImages.slice(0, 4).map((img, i) => (
-              <figure
-                key={img.name}
-                className={`absolute ${CORNER_SLOTS[i]} w-[110px] sm:w-[172px] lg:w-[232px] aspect-[4/3] rounded-2xl overflow-hidden border border-white/20 shadow-2xl shadow-black/35`}
-                style={{
-                  animation: `drift ${7 + i}s ease-in-out ${i * 0.24}s infinite`,
-                  opacity: 0.82 - i * 0.09,
-                }}
+            <div className="inline-block px-4 py-1.5 rounded-full bg-[#efeee3] text-[#855863] text-xs font-semibold tracking-[0.18em] uppercase w-fit">
+              The Digital Archivist
+            </div>
+
+            <h1
+              className="text-[#373930] leading-[1.08] italic"
+              style={{ fontFamily: 'Newsreader, serif', fontSize: 'clamp(2.8rem, 9vw, 5.5rem)' }}
+            >
+              Your life is worth a
+              <span
+                className="block text-[#855863] -mt-2 md:-mt-4"
+                style={{ fontFamily: 'Birthstone, cursive', fontSize: 'clamp(3rem, 10vw, 6.2rem)', fontStyle: 'normal' }}
               >
-                <img
-                  src={getFileUrl(img)}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  style={{ animation: `kenburns1 ${16 + i * 4}s ease-in-out ${i * 1.5}s infinite alternate` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/42 via-transparent to-transparent" />
-              </figure>
-            ))}
+                cinematic presentation
+              </span>
+            </h1>
 
-            <div className="relative z-10 w-full max-w-4xl py-9 px-10 sm:py-12 sm:px-14 lg:py-14 lg:px-16">
-              <h1 className="text-[2rem] font-extrabold leading-[1.32] sm:text-[2.75rem] lg:text-[3.35rem] text-white tracking-tight">
-                你的每一天
-                <br />
-                <span className="text-cyan-200">都值得电影感呈现</span>
-              </h1>
-              <p className="mt-7 sm:mt-8 text-[1.03rem] sm:text-[1.14rem] leading-[2.1] text-slate-200/92 max-w-3xl">
-                Solis 自动采集照片与声音，识别高光时刻，生成可回看、可分享、可续写的记忆影像。
-              </p>
-              <div className="mt-8 sm:mt-9 grid grid-cols-3 gap-2.5 sm:gap-3">
-                <StatChip label="Today" value={formatDate(today)} />
-                <StatChip label="Photo" value={`${images.length}`} />
-                <StatChip label="Audio" value={`${audios.length}`} live />
-              </div>
+            <p className="text-[#64655b] text-[1.08rem] leading-[1.85] max-w-xl mx-auto">
+              Solis automatically collects photos and sounds, identifies highlight moments, and creates shareable, continuing memory films.
+            </p>
+
+            <div className="flex w-full flex-wrap items-center justify-center gap-4">
+              <button
+                onClick={handleStart}
+                className="w-full sm:w-auto rounded-full px-12 md:px-16 py-6 min-h-[4.6rem] sm:min-w-[19rem] md:min-w-[23rem] bg-[#6a6362] text-white text-lg font-semibold hover:shadow-xl transition-all"
+              >
+                Begin Your Archive
+              </button>
+              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 md:px-14 py-4 min-h-[4rem] sm:min-w-[16rem] md:min-w-[20rem] rounded-full bg-[#ede2e0]/70 text-[#6a6362] font-semibold">
+                <span className="material-symbols-outlined">play_circle</span>
+                See the Magic
+              </button>
             </div>
           </div>
-        </section>
 
-        <section
-          className="snap-start min-h-[100svh] w-full flex items-start lg:items-center"
-          style={sectionPaddingStyle}
-        >
-          <div className="w-full max-w-5xl mx-auto py-9 px-10 sm:py-12 sm:px-14 lg:py-14 lg:px-16">
-            <div className="relative">
-              <div className="absolute inset-0 -z-10 pointer-events-none bg-[radial-gradient(circle_at_18%_28%,rgba(129,236,255,0.16),transparent_38%),radial-gradient(circle_at_84%_78%,rgba(255,215,9,0.14),transparent_34%)]" />
-
-              <div>
-                <h2 className="text-[1.88rem] font-extrabold sm:text-[2.55rem] leading-[1.32] text-white tracking-tight">
-                  无需操作
-                  <br />
-                  <span className="text-cyan-200">自动生成专属剧情</span>
-                </h2>
-                <p className="mt-7 text-[1.01rem] sm:text-[1.12rem] leading-[2.1] text-slate-200/92 max-w-2xl">
-                  多模态 AI 会自动解析照片与语音线索，完成关键片段筛选、镜头语义编排与风格化生成，让日常记录自然变成可播放的短片叙事。
-                </p>
-
-                <div className="mt-8 grid sm:grid-cols-2 gap-3.5">
-                  <FlowCard
-                    title="Capture Stream"
-                    subtitle="Photo + Audio synced"
-                    progress="78%"
-                    tone="cyan"
-                    icon={
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 7.5A1.5 1.5 0 016 6h12a1.5 1.5 0 011.5 1.5v9A1.5 1.5 0 0118 18H6a1.5 1.5 0 01-1.5-1.5v-9z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9.75h6M9 12h3.75M15 12h.008v.008H15V12z" />
-                      </svg>
-                    }
-                  />
-                  <FlowCard
-                    title="Story Assembly"
-                    subtitle="Prompt + render"
-                    progress="61%"
-                    tone="amber"
-                    icon={
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-1.113-2.79a4.5 4.5 0 00-2.544-2.544L2.25 12l2.79-1.113a4.5 4.5 0 002.544-2.544L9 5.25l1.113 2.79a4.5 4.5 0 002.544 2.544L15.75 12l-2.79 1.113a4.5 4.5 0 00-2.544 2.544z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 8.25h.008v.008h-.008V8.25zM18.75 15.75h.008v.008h-.008v-.008z" />
-                      </svg>
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          className="snap-start min-h-[100svh] w-full flex items-start lg:items-center"
-          style={sectionPaddingStyle}
-        >
-          <div className="w-full max-w-5xl mx-auto py-9 px-10 sm:py-12 sm:px-14 lg:py-14 lg:px-16">
-            <div className="grid md:grid-cols-[1fr_1.1fr] gap-7 md:gap-10 items-center">
-              <div className="relative h-[280px] sm:h-[320px] rounded-3xl overflow-hidden border border-white/15 bg-gradient-to-br from-cyan-300/22 via-blue-400/12 to-slate-900/55">
-                {previewImages[0] ? (
-                  <img src={getFileUrl(previewImages[0])} alt="" className="w-full h-full object-cover opacity-78" />
+          <div className="lg:col-span-5 relative flex justify-center py-8 lg:py-14">
+            <div className="relative w-[84%] max-w-[380px] mx-auto aspect-[4/5] bg-white p-4 rounded-2xl shadow-[0_16px_50px_rgba(55,57,48,0.12)] rotate-[1.4deg] z-10">
+              <div className="w-full h-[84%] rounded-lg overflow-hidden bg-[#ece9dd]">
+                {imageUrls[0] ? (
+                  <img src={imageUrls[0]} alt="" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700" />
                 ) : (
-                  <div className="w-full h-full" />
+                  <div className="w-full h-full bg-gradient-to-br from-[#f1eee2] to-[#dfdbc9]" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#081724]/95 via-[#081724]/35 to-transparent" />
               </div>
+              <p className="mt-4 text-center text-[#6a6362]" style={{ fontFamily: 'Birthstone, cursive', fontSize: '2rem' }}>
+                {formatDate(today)}
+              </p>
+            </div>
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[74%] max-w-[320px] aspect-[4/5] rounded-2xl bg-[#efeee3] -rotate-[4deg] opacity-70 -z-10" />
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[52%] max-w-[240px] aspect-square rounded-full bg-[#ffd9e0] blur-3xl opacity-35 -z-20" />
+          </div>
+        </section>
 
-              <div>
-                <h2 className="text-[1.95rem] font-extrabold sm:text-[2.65rem] leading-[1.32] text-white tracking-tight">
-                  点击开启
-                  <br />
-                  <span className="text-cyan-200">你的第一支记忆短片</span>
-                </h2>
-                <p className="mt-7 text-[1.02rem] sm:text-[1.13rem] leading-[2.1] text-slate-200/92">
-                  进入后你可以在 Diary 查看时间线，在 Memory 对话追问细节，在 Cinema 立即生成并播放视频。
-                </p>
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-14 mb-24">
+          <div className="rounded-[1.8rem] bg-[#f5f4e9] border border-[#ebe8dc] py-10 px-6 sm:px-8">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-10 text-center">
+              <StatBlock value={`${images.length} photos`} label="Processed Today" />
+              <div className="hidden md:block h-14 w-px bg-[#d9d8cc]" />
+              <StatBlock value={`${audios.length} audio recordings`} label="Captured & Curated" />
+            </div>
+          </div>
+        </section>
 
-                <div className="mt-8">
-                  <button
-                    type="button"
-                    onClick={handleStart}
-                    className="w-full rounded-2xl border-0 px-6 py-4 text-[1.08rem] font-extrabold text-[#072133] bg-gradient-to-r from-[#86f2ff] via-[#a9f4ff] to-[#6ce8ff] hover:translate-y-[-1px] transition-transform"
-                    style={{ animation: 'glowPulse 2.6s ease-in-out infinite' }}
-                  >
-                    ✦ Enter Solis
-                  </button>
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-14 mb-32">
+          <div className="flex flex-col items-center text-center gap-6 mb-16 md:mb-20">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-[2.6rem] md:text-[3.2rem] text-[#373930]" style={{ fontFamily: 'Newsreader, serif' }}>
+                Curation is a form of <span className="italic">love</span>.
+              </h2>
+              <p className="mt-6 text-[#64655b] leading-[1.95]">
+                We don't just store files; we weave narratives. Solis uses ambient AI to listen for laughter, detect golden hour, and find the threads that connect your days.
+              </p>
+            </div>
+            <a className="inline-block text-[#855863] text-xs uppercase tracking-[0.18em] font-bold mt-1" href="#">View All Features</a>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div className="md:col-span-8 rounded-[1.8rem] bg-[#fbfaf0] border border-[#e8e5d8] p-8 md:p-11 flex flex-col md:flex-row gap-10 items-center">
+              <div className="flex-1 flex flex-col items-center text-center">
+                <div className="w-11 h-11 rounded-full bg-[#ffd9e0] text-[#855863] flex items-center justify-center">
+                  <span className="material-symbols-outlined">movie_filter</span>
                 </div>
+                <h3 className="mt-5 text-[2rem] md:text-[2.3rem] italic text-[#373930]" style={{ fontFamily: 'Newsreader, serif' }}>Daily Vlog</h3>
+                <p className="mt-4 text-[#64655b] leading-[1.9] max-w-[34rem]">
+                  Every evening, Solis delivers a summary of your day. It is not just video; it is a feeling.
+                </p>
+                <button className="mt-6 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 md:px-12 py-4 min-h-[3.8rem] sm:min-w-[16rem] md:min-w-[19rem] rounded-full bg-[#ffd9e0]/65 text-[#855863] font-semibold">
+                  Watch your preview
+                  <span className="material-symbols-outlined text-[20px]">arrow_right_alt</span>
+                </button>
               </div>
+              <PolaroidCard image={imageUrls[1] || imageUrls[0] || ''} title="The Summer Cut" volume="Volume 04" />
+            </div>
+
+            <div className="md:col-span-4 rounded-[1.8rem] bg-[#efeee3] border border-[#e3dfd1] p-7 md:p-9">
+              <div className="w-11 h-11 rounded-full bg-[#feeaac] text-[#726332] flex items-center justify-center">
+                <span className="material-symbols-outlined">auto_graph</span>
+              </div>
+              <h3 className="mt-5 text-[1.95rem] italic text-[#373930]" style={{ fontFamily: 'Newsreader, serif' }}>Timeline</h3>
+              <p className="mt-3 text-[#64655b] leading-[1.8] text-sm">
+                A tactile stream of your life pulse. See moments as they happened, enriched with AI metadata.
+              </p>
+              <div className="mt-6 h-36 rounded-xl overflow-hidden bg-[#e9e9dc]">
+                {imageUrls[2] ? (
+                  <img src={imageUrls[2]} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#f1eee2] to-[#dfdbc9]" />
+                )}
+              </div>
+            </div>
+
+            <div className="md:col-span-12 rounded-[1.8rem] bg-[#ebe0de]/45 border border-[#e2d6d2] p-8 md:p-10">
+              <div className="inline-flex items-center gap-2 text-[#6a6362] text-xs uppercase tracking-[0.18em] font-bold">
+                <span className="material-symbols-outlined text-sm">colors_spark</span>
+                Exclusive Insight
+              </div>
+              <h3 className="mt-4 text-[2.45rem] text-[#373930]" style={{ fontFamily: 'Newsreader, serif' }}>AI Narratives</h3>
+              <p className="mt-3 text-[#5f6058] leading-[1.85] max-w-3xl">
+                Solis writes the story you're too busy living and identifies themes across your daily memory stream.
+              </p>
+              <div className="mt-7 grid grid-cols-2 md:grid-cols-4 gap-3.5">
+                {[3, 4, 5, 6].map((idx) => (
+                  <div key={idx} className="aspect-square rounded-xl border border-[#e8e5d8] bg-white p-2">
+                    {imageUrls[idx] ? (
+                      <img src={imageUrls[idx]} alt="" className="w-full h-full object-cover rounded-lg" />
+                    ) : (
+                      <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#f1eee2] to-[#dfdbc9]" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="max-w-5xl mx-auto px-10 sm:px-16 lg:px-24 mt-10 mb-28">
+          <div className="relative max-w-4xl mx-auto rounded-[1.6rem] bg-[#ffd9e0] border border-[#efc2cc] py-12 md:py-14 px-6 md:px-10 text-center overflow-hidden">
+            <div className="absolute -top-24 -left-16 w-80 h-80 rounded-full bg-white/65 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -right-8 w-72 h-72 rounded-full bg-[#f4a8b8]/55 blur-3xl pointer-events-none" />
+            <h2 className="relative text-[1.75rem] md:text-[2.35rem] text-[#4a383f] leading-[1.3] max-w-2xl mx-auto" style={{ fontFamily: 'Newsreader, serif' }}>
+              Don't let your memories become data. Let them become films.
+            </h2>
+            <p className="relative mt-5 text-[#704650] text-[1rem] md:text-[1.1rem] leading-[1.9] max-w-xl mx-auto">
+              Join creators transforming their digital footprints into heirloom stories.
+            </p>
+            <div className="relative mt-7 flex flex-col sm:flex-row justify-center gap-3.5">
+              <button
+                onClick={handleStart}
+                className="w-full sm:w-auto px-10 md:px-12 py-5 min-h-[3.9rem] sm:min-w-[14.5rem] md:min-w-[17rem] rounded-full bg-[#6a6362] text-white text-[1.05rem] md:text-[1.15rem] font-bold hover:scale-[1.02] transition-transform"
+              >
+                Get Solis for iOS
+              </button>
+              <button className="w-full sm:w-auto px-10 md:px-12 py-5 min-h-[3.9rem] sm:min-w-[14.5rem] md:min-w-[17rem] rounded-full bg-white text-[#855863] text-[1.05rem] md:text-[1.15rem] font-bold hover:scale-[1.02] transition-transform">
+                Explore Pricing
+              </button>
             </div>
           </div>
         </section>
       </main>
 
-      <div
-        className="absolute left-1/2 -translate-x-1/2 z-20"
-        style={{ bottom: 'calc(1.6rem + env(safe-area-inset-bottom))' }}
-      >
-        <div className="ios26-tabs">
-          {[
-            { label: 'Intro', index: 0 },
-            { label: 'Auto', index: 1 },
-            { label: 'Start', index: 2 },
-          ].map((item) => (
-            <button
-              key={item.index}
-              type="button"
-              onClick={() => jumpToPage(item.index)}
-              className={`ios26-tab ${activePage === item.index ? 'ios26-tab-active' : ''}`}
-              aria-label={`Go to slide ${item.index + 1}`}
-            >
-              {item.label}
-            </button>
-          ))}
+      <footer className="py-12">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-14">
+          <div className="rounded-[1.6rem] bg-[#f9f8ef] border border-[#ece9dc] py-10 px-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-7">
+            <div className="text-center md:text-left">
+              <div className="text-[1.6rem] italic text-[#5f4a50]" style={{ fontFamily: 'Newsreader, serif' }}>Solis</div>
+              <p className="mt-2 text-xs tracking-[0.16em] uppercase text-[#8d8c82]">© 2026 Solis. Every memory is an heirloom.</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-7 text-xs tracking-[0.16em] uppercase text-[#8d8c82]">
+              <span>Archive Policy</span>
+              <span>Privacy</span>
+              <span>Terms</span>
+              <span>Contact</span>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="hidden lg:flex absolute bottom-7 right-8 z-20 items-center gap-2 text-[12px] font-semibold tracking-[0.15em] uppercase text-white/62">
-        <span>Scroll</span>
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m0 0l-4-4m4 4l4-4" />
-        </svg>
-      </div>
+      </footer>
     </div>
   )
 }
 
-function StatChip({ label, value, live = false }: { label: string; value: string; live?: boolean }) {
+function StatBlock({ value, label }: { value: string; label: string }) {
   return (
-    <div className="relative rounded-2xl border border-white/14 bg-white/7 px-5 py-5 sm:px-6 text-center overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-cyan-300/0 via-cyan-300/75 to-cyan-300/0" />
-      <div className="text-[11px] uppercase tracking-[0.15em] font-bold text-slate-300">{label}</div>
-      <div className="mt-1.5 flex items-center justify-center gap-1.5 text-[1rem] sm:text-[1.05rem] font-bold text-white font-mono">
-        {live && <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" style={{ animation: 'breathe 2s ease-in-out infinite' }} />}
-        <span className="truncate">{value}</span>
-      </div>
+    <div className="flex flex-col gap-1">
+      <span className="text-[2rem] md:text-[2.3rem] italic text-[#373930]" style={{ fontFamily: 'Newsreader, serif' }}>
+        {value}
+      </span>
+      <span className="text-[11px] uppercase tracking-[0.2em] text-[#855863] font-bold">{label}</span>
     </div>
   )
 }
 
-function FlowCard({
-  title,
-  subtitle,
-  progress,
-  tone,
-  icon,
-}: {
-  title: string
-  subtitle: string
-  progress: string
-  tone: 'cyan' | 'amber'
-  icon: ReactNode
-}) {
-  const isCyan = tone === 'cyan'
+function PolaroidCard({ image, title, volume }: { image: string; title: string; volume: string }) {
   return (
-    <div className="rounded-2xl border border-white/14 bg-white/7 p-6 sm:p-7">
-      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${isCyan ? 'bg-cyan-300/20 text-cyan-100' : 'bg-amber-300/22 text-amber-100'}`}>
-        {icon}
+    <div className="w-full md:w-80 rounded-2xl bg-white p-4 shadow-lg rotate-3">
+      <div className="aspect-[4/5] rounded-lg overflow-hidden bg-[#ece9dd]">
+        {image ? (
+          <img src={image} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[#f1eee2] to-[#dfdbc9]" />
+        )}
       </div>
-      <div className="mt-3 text-[1.04rem] font-bold text-white">{title}</div>
-      <div className="text-[12px] font-medium text-slate-300">{subtitle}</div>
-      <div className="mt-3 h-1.5 rounded-full bg-white/15 overflow-hidden">
-        <div
-          className={`h-full rounded-full ${isCyan ? 'bg-cyan-200' : 'bg-amber-200'}`}
-          style={{ width: progress, animation: 'pulseBar 2.1s ease-in-out infinite' }}
-        />
+      <div className="mt-3 px-1.5 flex items-center justify-between">
+        <span style={{ fontFamily: 'Birthstone, cursive', fontSize: '1.6rem' }} className="text-[#6a6362]">{title}</span>
+        <span className="text-[10px] uppercase tracking-[0.1em] text-[#98978f] font-bold">{volume}</span>
       </div>
     </div>
   )
