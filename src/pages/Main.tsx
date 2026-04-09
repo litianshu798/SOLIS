@@ -52,33 +52,30 @@ export default function Main({ onGoHome }: Props) {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 8% 20%, rgba(73,127,255,0.2), transparent 30%), radial-gradient(circle at 90% 8%, rgba(66,183,156,0.2), transparent 35%)',
+            'radial-gradient(circle at 12% 10%, rgba(93,143,255,0.24), transparent 30%), radial-gradient(circle at 84% 16%, rgba(73,199,174,0.22), transparent 34%), linear-gradient(165deg, #081724 0%, #0d1f31 48%, #11263a 100%)',
         }}
       />
 
       <div className="relative z-10 app-shell flex flex-col">
         <header className="shrink-0">
-          <div className="surface-panel-strong rounded-[1.6rem] px-4 py-4 md:px-6 md:py-5">
-            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-              <div>
-                <div className="section-label">Solis Studio</div>
-                <button
-                  type="button"
-                  onClick={onGoHome}
-                  className="mt-1.5 flex items-center gap-3 rounded-xl transition-opacity hover:opacity-80"
-                  aria-label="Back to Solis home"
-                  title="Back to home"
-                >
-                  <img src={solisLogo} alt="Solis logo" className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-md shadow-black/15 object-cover" />
-                  <div className="font-serif text-[2.15rem] md:text-[2.7rem] leading-none text-[var(--text-strong)]">Solis</div>
-                </button>
-              </div>
-              <div className="chip rounded-full px-4 py-2 text-[13px] md:text-[14px] font-bold w-fit">
+          <div className="surface-panel-strong rounded-[1.6rem] px-6 py-5 md:px-8 md:py-6">
+            <div className="flex flex-col items-center gap-3">
+              <button
+                type="button"
+                onClick={onGoHome}
+                className="flex items-center justify-center gap-3 rounded-xl transition-opacity hover:opacity-80"
+                aria-label="Back to Solis home"
+                title="Back to home"
+              >
+                <img src={solisLogo} alt="Solis logo" className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-md shadow-black/15 object-cover" />
+                <div className="text-[2.15rem] md:text-[2.7rem] font-extrabold leading-[1.32] tracking-tight text-white">Solis</div>
+              </button>
+              <div className="chip rounded-full px-4 py-2 text-[13px] md:text-[14px] font-bold w-fit text-cyan-200">
                 Active: {active.label}
               </div>
             </div>
 
-            <nav className="mt-4 grid grid-cols-3 gap-2.5 md:gap-3">
+            <nav className="mt-5 grid grid-cols-3 gap-3 md:gap-3.5">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id
                 return (
@@ -88,7 +85,7 @@ export default function Main({ onGoHome }: Props) {
                     className={`nav-pill py-3.5 md:py-4 px-2.5 md:px-4 flex items-center justify-center gap-2.5 ${isActive ? 'nav-pill-active' : ''}`}
                   >
                     <span className="opacity-95">{tab.icon}</span>
-                    <span className="text-[14px] md:text-[16px] font-bold tracking-wide">{tab.label}</span>
+                    <span className="text-[14px] md:text-[16px] font-extrabold tracking-[0.04em]">{tab.label}</span>
                   </button>
                 )
               })}

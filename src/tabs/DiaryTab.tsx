@@ -55,7 +55,7 @@ export default function DiaryTab({ onOpenCinema }: Props) {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="shrink-0 px-4 md:px-6 py-3.5 border-b border-[var(--line)] bg-white/55 backdrop-blur-sm">
+      <header className="shrink-0 px-6 md:px-8 py-4 border-b border-[var(--line)] bg-white/[0.04] backdrop-blur-sm">
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={() => setDate(shiftDate(date, -1))}
@@ -66,8 +66,8 @@ export default function DiaryTab({ onOpenCinema }: Props) {
             </svg>
           </button>
           <div className="text-center">
-            <div className="font-serif text-[1.45rem] md:text-[1.8rem] text-[var(--text-strong)] leading-none">{formatDate(date)}</div>
-            <div className="mt-1.5 text-[13px] font-semibold text-[var(--text-muted)]">
+            <div className="text-[1.5rem] md:text-[1.85rem] font-extrabold text-white leading-[1.32] tracking-tight">{formatDate(date)}</div>
+            <div className="mt-2 text-[13px] font-semibold text-[var(--text-muted)]">
               {images.length} photos · {audios.length} recordings
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function DiaryTab({ onOpenCinema }: Props) {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-6 md:px-8 py-5">
         {isLoading ? (
           <div className="h-48 flex flex-col items-center justify-center text-[var(--text-muted)]">
             <div className="w-7 h-7 border-2 border-[rgba(109,88,67,0.15)] border-t-[var(--accent)] rounded-full animate-spin" />
@@ -99,9 +99,9 @@ export default function DiaryTab({ onOpenCinema }: Props) {
         )}
 
         {clipResult && (
-          <div className="surface-panel rounded-2xl px-4 py-3 mt-5">
+          <div className="surface-panel rounded-2xl px-5 py-4 mt-6">
             <div className="section-label">Generation Task</div>
-            <div className="mt-1.5 text-sm text-[var(--text-strong)]">
+            <div className="mt-2 text-sm leading-[2.1] text-[var(--text-strong)]">
               {clipResult.status === 'processing' && 'Task submitted. AI is preparing your diary clip.'}
               {clipResult.status === 'generating' && 'Visual direction generated. Rendering in progress.'}
               {clipResult.status === 'completed' && 'Task completed. Check the generated summary below.'}
@@ -112,14 +112,14 @@ export default function DiaryTab({ onOpenCinema }: Props) {
         )}
 
         {summaryText && (
-          <div className="surface-panel-strong rounded-2xl px-4 py-4 mt-4" style={{ animation: 'scaleIn 0.35s ease-out' }}>
+          <div className="surface-panel-strong rounded-2xl px-5 py-5 mt-5" style={{ animation: 'scaleIn 0.35s ease-out' }}>
             <div className="section-label">AI Summary</div>
-            <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-strong)]">{summaryText}</p>
+            <p className="mt-2 text-[15px] leading-[2.1] text-[var(--text-strong)]">{summaryText}</p>
           </div>
         )}
 
         {timeline.length > 0 && (
-          <div className="sticky bottom-3 pt-6">
+          <div className="sticky bottom-4 pt-7">
             <button
               onClick={handleGenerate}
               disabled={generating}
@@ -172,7 +172,7 @@ function TimelineRow({ item, index, onImageClick }: { item: TimelineItem; index:
       {item.type === 'image' ? (
         <button
           onClick={() => onImageClick(getFileUrl(item.obj))}
-          className="group flex-1 max-w-[min(100%,420px)] rounded-2xl overflow-hidden border border-white/70 shadow-md shadow-black/5"
+          className="group flex-1 max-w-[min(100%,420px)] rounded-2xl overflow-hidden border border-white/14 shadow-md shadow-black/30"
         >
           <img
             src={getFileUrl(item.obj)}
@@ -214,11 +214,11 @@ function AudioCard({ obj }: { obj: OSSObject }) {
 
   return (
     <div className="flex-1 max-w-[min(100%,420px)]">
-      <div className="surface-panel rounded-2xl px-3.5 py-3 flex items-center gap-3">
+      <div className="surface-panel rounded-2xl px-4 py-3.5 flex items-center gap-3.5">
         <button
           onClick={toggle}
           className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-            playing ? 'bg-[#3a85cb] text-white' : 'bg-[#e7f2fd] text-[#3a85cb] hover:bg-[#d9ecff]'
+            playing ? 'bg-cyan-400 text-[#072133]' : 'bg-cyan-400/15 text-cyan-300 hover:bg-cyan-400/25'
           }`}
         >
           {playing ? (
@@ -244,7 +244,7 @@ function AudioCard({ obj }: { obj: OSSObject }) {
 function EmptyState() {
   return (
     <div className="h-56 flex flex-col items-center justify-center text-center">
-      <div className="w-16 h-16 rounded-2xl bg-white/70 border border-[var(--line)] flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-2xl bg-white/[0.06] border border-[var(--line)] flex items-center justify-center mb-4">
         <svg className="w-7 h-7 text-[var(--text-muted)]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />

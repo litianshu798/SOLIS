@@ -40,10 +40,10 @@ const FALLBACK_PLAYABLES: PlayableVideoItem[] = [
 ]
 
 function statusMeta(status: CinemaRecord['status']) {
-  if (status === 'completed') return { label: 'Completed', cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' }
-  if (status === 'generating') return { label: 'Generating', cls: 'bg-amber-100 text-amber-800 border-amber-200' }
-  if (status === 'processing') return { label: 'Preparing', cls: 'bg-sky-100 text-sky-700 border-sky-200' }
-  return { label: 'Failed', cls: 'bg-rose-100 text-rose-700 border-rose-200' }
+  if (status === 'completed') return { label: 'Completed', cls: 'bg-emerald-400/15 text-emerald-300 border-emerald-400/25' }
+  if (status === 'generating') return { label: 'Generating', cls: 'bg-amber-400/15 text-amber-300 border-amber-400/25' }
+  if (status === 'processing') return { label: 'Preparing', cls: 'bg-sky-400/15 text-sky-300 border-sky-400/25' }
+  return { label: 'Failed', cls: 'bg-rose-400/15 text-rose-300 border-rose-400/25' }
 }
 
 function formatDateTime(v?: string) {
@@ -161,17 +161,16 @@ export default function VideoTab() {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="shrink-0 px-4 md:px-6 py-3.5 border-b border-[var(--line)] bg-white/55 backdrop-blur-sm">
-        <div className="section-label">Cinema Hourly</div>
-        <div className="mt-1.5 flex items-center justify-between">
-          <h2 className="font-serif text-[1.7rem] md:text-[2rem] leading-none text-[var(--text-strong)]">Anime Reel</h2>
+      <header className="shrink-0 px-6 md:px-8 py-4 border-b border-[var(--line)] bg-white/[0.04] backdrop-blur-sm">
+        <div className="flex flex-col items-center gap-2.5">
+          <h2 className="text-[1.75rem] md:text-[2.1rem] font-extrabold leading-[1.32] tracking-tight text-white text-center">Anime Reel</h2>
           <div className="chip rounded-full px-3.5 py-2 text-[13px] font-bold">{records.length} records</div>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-6 md:px-8 py-5">
         <div className="surface-panel-strong rounded-2xl overflow-hidden">
-          <div className="aspect-video bg-[rgba(32,24,16,0.08)] relative">
+          <div className="aspect-video bg-black/30 relative">
             {latestVideo ? (
               <video src={latestVideo} controls className="w-full h-full object-cover bg-black" />
             ) : (
@@ -197,16 +196,16 @@ export default function VideoTab() {
             )}
           </div>
 
-          <div className="px-4 py-3.5 border-t border-[var(--line)] bg-white/70 text-[13px]">
+          <div className="px-5 py-4 border-t border-[var(--line)] bg-white/[0.04] text-[13px]">
             <div className="flex items-center justify-between">
-              <div className="text-[var(--text-muted)]">每小时自动从过去一小时随机取图 1 张，生成 AI 漫剧短片</div>
+              <div className="text-[var(--text-muted)] leading-[2.0]">每小时自动从过去一小时随机取图 1 张，生成 AI 漫剧短片</div>
               {latestStatus && (
                 <span className={`px-2 py-0.5 rounded-full border font-semibold ${latestStatus.cls}`}>
                   {latestStatus.label}
                 </span>
               )}
             </div>
-            <div className="mt-2 text-[var(--text-muted)]">
+            <div className="mt-2 text-[var(--text-muted)] leading-[2.0]">
               {showingFallback
                 ? '当前暂无可用生成视频，正在展示预置短片。'
                 : `最近生成时间：${formatDateTime(activePlayable?.createdAt)}，运行中任务：${runningCount}`}
@@ -215,14 +214,14 @@ export default function VideoTab() {
         </div>
 
         {latest && (
-          <section className="mt-4 grid grid-cols-2 gap-2.5 text-[13px]">
-            <div className="chip rounded-xl px-3 py-2">
+          <section className="mt-6 grid grid-cols-2 gap-3 text-[13px]">
+            <div className="chip rounded-xl px-4 py-3">
               <div className="section-label">Hour Bucket</div>
-              <div className="mt-1 text-[var(--text-strong)]">{latest.result?.hourBucket || latest.date || '--'}</div>
+              <div className="mt-1.5 text-[var(--text-strong)]">{latest.result?.hourBucket || latest.date || '--'}</div>
             </div>
-            <div className="chip rounded-xl px-3 py-2">
+            <div className="chip rounded-xl px-4 py-3">
               <div className="section-label">Captured At</div>
-              <div className="mt-1 text-[var(--text-strong)]">{formatDateTime(latest.result?.selectedImageAt)}</div>
+              <div className="mt-1.5 text-[var(--text-strong)]">{formatDateTime(latest.result?.selectedImageAt)}</div>
             </div>
           </section>
         )}
@@ -230,7 +229,7 @@ export default function VideoTab() {
         {latestImage && (
           <section className="mt-4">
             <div className="section-label mb-2">Selected Source Photo</div>
-            <div className="rounded-2xl overflow-hidden border border-white/70 shadow-sm shadow-black/5">
+            <div className="rounded-2xl overflow-hidden border border-white/14 shadow-sm shadow-black/5">
               <img src={ossProxyUrl(latestImage)} alt="selected source" className="w-full aspect-video object-cover" />
             </div>
           </section>
@@ -246,7 +245,7 @@ export default function VideoTab() {
                   <button
                     key={item.id}
                     onClick={() => setActivePlayableId(item.id)}
-                    className={`text-left rounded-xl overflow-hidden border transition-all ${active ? 'border-[var(--accent)] ring-2 ring-[rgba(200,122,55,0.25)]' : 'border-white/70'}`}
+                    className={`text-left rounded-xl overflow-hidden border transition-all ${active ? 'border-[var(--accent)] ring-2 ring-cyan-400/30' : 'border-white/14'}`}
                   >
                     <video src={item.url} preload="metadata" className="w-full aspect-video object-cover bg-black" />
                     <div className="px-2.5 py-2 text-[12px] text-[var(--text-muted)] font-semibold">
@@ -263,7 +262,7 @@ export default function VideoTab() {
         <section className="mt-5">
           <div className="section-label mb-2">Manual Pick</div>
           {images.length === 0 ? (
-            <div className="chip rounded-xl px-3 py-4 text-center text-[13px] font-semibold">今天还没有可选图片。</div>
+            <div className="chip rounded-xl px-3 py-4 text-center text-[13px] font-semibold text-[var(--text-muted)]">今天还没有可选图片。</div>
           ) : (
             <>
               <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-6 gap-2">
@@ -273,7 +272,7 @@ export default function VideoTab() {
                     <button
                       key={img.name}
                       onClick={() => setSelectedImage(img.name)}
-                      className={`relative rounded-xl overflow-hidden border transition-all ${active ? 'border-[var(--accent)] ring-2 ring-[rgba(200,122,55,0.25)]' : 'border-white/70'}`}
+                      className={`relative rounded-xl overflow-hidden border transition-all ${active ? 'border-[var(--accent)] ring-2 ring-cyan-400/30' : 'border-white/14'}`}
                     >
                       <img
                         src={getFileUrl(img)}

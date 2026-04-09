@@ -2,18 +2,18 @@
 @import "tailwindcss";
 
 :root {
-  --bg-base: #edf2f9;
-  --bg-soft: #f6f8fc;
-  --surface: rgba(255, 255, 255, 0.78);
-  --surface-strong: rgba(255, 255, 255, 0.93);
-  --text-strong: #17233a;
-  --text-muted: #60718f;
-  --line: rgba(77, 103, 144, 0.2);
-  --accent: #2f6df6;
-  --accent-soft: #e5eeff;
-  --success: #22a56b;
-  --shadow-soft: 0 14px 40px rgba(23, 35, 58, 0.08);
-  --shadow-focus: 0 22px 54px rgba(23, 35, 58, 0.14);
+  --bg-base: #0d1f31;
+  --bg-soft: #0a1825;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.10);
+  --text-strong: #e8f0ff;
+  --text-muted: #7a8fa8;
+  --line: rgba(255, 255, 255, 0.14);
+  --accent: #5dcfff;
+  --accent-soft: rgba(93, 207, 255, 0.15);
+  --success: #4ade80;
+  --shadow-soft: 0 14px 40px rgba(2, 10, 22, 0.35);
+  --shadow-focus: 0 22px 54px rgba(2, 10, 22, 0.45);
 }
 
 * {
@@ -30,9 +30,9 @@ html, body, #root {
 
 body {
   background:
-    radial-gradient(circle at 8% 8%, rgba(65, 122, 255, 0.22), transparent 30%),
-    radial-gradient(circle at 90% 12%, rgba(73, 209, 172, 0.16), transparent 34%),
-    linear-gradient(165deg, #f8fbff 0%, var(--bg-base) 100%);
+    radial-gradient(circle at 12% 10%, rgba(93, 143, 255, 0.24), transparent 30%),
+    radial-gradient(circle at 84% 16%, rgba(73, 199, 174, 0.22), transparent 34%),
+    linear-gradient(165deg, #081724 0%, #0d1f31 48%, #11263a 100%);
   color: var(--text-strong);
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -56,7 +56,7 @@ body {
 
 .chip {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.07);
   color: var(--text-muted);
   font-size: 0.84rem;
   font-weight: 700;
@@ -82,7 +82,7 @@ body {
   position: relative;
   border-radius: 1rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
   transition: all 0.24s ease;
   min-height: 3.25rem;
@@ -90,15 +90,15 @@ body {
 
 .nav-pill:hover {
   color: var(--text-strong);
-  border-color: rgba(48, 95, 210, 0.35);
+  border-color: rgba(93, 207, 255, 0.35);
   transform: translateY(-1px);
 }
 
 .nav-pill-active {
-  color: #fff;
-  border-color: rgba(27, 74, 191, 0.5);
-  background: linear-gradient(135deg, #3f79f7 0%, #255fe4 58%, #1e54cc 100%);
-  box-shadow: 0 10px 24px rgba(41, 91, 217, 0.35);
+  color: #05253d;
+  border-color: rgba(93, 207, 255, 0.5);
+  background: linear-gradient(180deg, rgba(208, 246, 255, 0.95), rgba(152, 233, 255, 0.88));
+  box-shadow: 0 10px 24px rgba(90, 223, 255, 0.3);
 }
 
 .cta-btn {
@@ -109,15 +109,15 @@ body {
   font-size: 1.03rem;
   font-weight: 800;
   letter-spacing: 0.015em;
-  color: #fff;
-  background: linear-gradient(135deg, #3f79f7 0%, #255fe4 58%, #1e54cc 100%);
-  box-shadow: 0 14px 30px rgba(41, 91, 217, 0.33);
+  color: #072133;
+  background: linear-gradient(135deg, #86f2ff 0%, #a9f4ff 50%, #6ce8ff 100%);
+  box-shadow: 0 14px 30px rgba(59, 223, 255, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .cta-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(41, 91, 217, 0.4);
+  box-shadow: 0 16px 34px rgba(59, 223, 255, 0.4);
 }
 
 .cta-btn:disabled {
@@ -136,14 +136,14 @@ body {
   font-weight: 800;
   letter-spacing: 0.015em;
   color: var(--text-strong);
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.08);
   box-shadow: var(--shadow-soft);
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .cta-btn-secondary:hover {
   transform: translateY(-1px);
-  border-color: rgba(48, 95, 210, 0.35);
+  border-color: rgba(93, 207, 255, 0.35);
 }
 
 .icon-btn {
@@ -154,32 +154,33 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
   transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
   color: var(--text-strong);
-  border-color: rgba(48, 95, 210, 0.35);
+  border-color: rgba(93, 207, 255, 0.35);
 }
 
 .chat-bubble-ai {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.07);
   color: var(--text-strong);
   border-radius: 1rem;
 }
 
 .chat-bubble-user {
-  background: linear-gradient(135deg, #344a77 0%, #273657 100%);
-  color: #fff;
+  background: linear-gradient(135deg, rgba(93, 207, 255, 0.25) 0%, rgba(59, 150, 200, 0.3) 100%);
+  border: 1px solid rgba(93, 207, 255, 0.25);
+  color: #e8f0ff;
   border-radius: 1rem;
 }
 
 .chat-composer {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 1.1rem;
   box-shadow: var(--shadow-soft);
 }
@@ -189,9 +190,9 @@ body {
   height: 2.9rem;
   border-radius: 0.9rem;
   border: 0;
-  color: #fff;
-  background: linear-gradient(135deg, #3f79f7 0%, #255fe4 58%, #1e54cc 100%);
-  box-shadow: 0 10px 24px rgba(41, 91, 217, 0.28);
+  color: #072133;
+  background: linear-gradient(135deg, #86f2ff 0%, #a9f4ff 50%, #6ce8ff 100%);
+  box-shadow: 0 10px 24px rgba(59, 223, 255, 0.25);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -228,7 +229,7 @@ body {
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(98, 79, 62, 0.2); border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: rgba(140, 180, 220, 0.2); border-radius: 999px; }
 
 .hide-scrollbar {
   -ms-overflow-style: none;
@@ -265,7 +266,7 @@ body {
   letter-spacing: 0.11em;
   text-transform: uppercase;
   font-weight: 800;
-  transition: all 0.22s ease;
+  transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .ios26-tab:hover {
@@ -279,6 +280,7 @@ body {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.85),
     0 8px 18px rgba(90, 223, 255, 0.35);
+  min-width: 5.6rem;
 }
 
 .ios26-top-btn {
@@ -377,6 +379,18 @@ body {
   to { transform: rotate(360deg); }
 }
 @keyframes orbitSpinReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 14px 34px rgba(59,223,255,0.35), 0 0 0px rgba(59,223,255,0); }
+  50% { box-shadow: 0 18px 52px rgba(59,223,255,0.65), 0 0 48px rgba(59,223,255,0.28); }
+}
+@keyframes orbitDotSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes orbitDotSpinReverse {
   from { transform: rotate(360deg); }
   to { transform: rotate(0deg); }
 }
