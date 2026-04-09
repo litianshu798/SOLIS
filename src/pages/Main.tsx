@@ -2,6 +2,7 @@ import { useState } from 'react'
 import DiaryTab from '../tabs/DiaryTab'
 import QATab from '../tabs/QATab'
 import VideoTab from '../tabs/VideoTab'
+import solisLogo from '../assets/solis-logo.svg'
 
 const tabs = [
   {
@@ -43,26 +44,50 @@ export default function Main() {
 
   return (
     <div className="relative h-full overflow-hidden" style={{ animation: 'fadeIn 0.45s ease-out' }}>
-      <div className="absolute inset-0 pointer-events-none"
+      <div
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 8% 20%, rgba(214,138,70,0.14), transparent 30%), radial-gradient(circle at 90% 8%, rgba(226,194,157,0.3), transparent 35%)',
+            'radial-gradient(circle at 8% 20%, rgba(73,127,255,0.2), transparent 30%), radial-gradient(circle at 90% 8%, rgba(66,183,156,0.2), transparent 35%)',
         }}
       />
 
-      <div className="relative z-10 h-full max-w-md mx-auto flex flex-col">
-        <header className="shrink-0 px-5 pt-5 pb-3">
-          <div className="surface-panel rounded-2xl px-4 py-3">
-            <div className="section-label">Personal Cut</div>
-            <div className="mt-1.5 flex items-center justify-between">
-              <div className="font-serif text-2xl leading-none text-[var(--text-strong)]">Vibeverse</div>
-              <div className="chip rounded-full px-2.5 py-1 text-[11px] font-semibold">{active.label}</div>
+      <div className="relative z-10 app-shell flex flex-col">
+        <header className="shrink-0">
+          <div className="surface-panel-strong rounded-[1.6rem] px-4 py-4 md:px-6 md:py-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div className="section-label">Solis Studio</div>
+                <div className="mt-1.5 flex items-center gap-3">
+                  <img src={solisLogo} alt="Solis logo" className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-md shadow-black/15 object-cover" />
+                  <div className="font-serif text-[2.15rem] md:text-[2.7rem] leading-none text-[var(--text-strong)]">Solis</div>
+                </div>
+              </div>
+              <div className="chip rounded-full px-4 py-2 text-[13px] md:text-[14px] font-bold w-fit">
+                Active: {active.label}
+              </div>
             </div>
+
+            <nav className="mt-4 grid grid-cols-3 gap-2.5 md:gap-3">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`nav-pill py-3.5 md:py-4 px-2.5 md:px-4 flex items-center justify-center gap-2.5 ${isActive ? 'nav-pill-active' : ''}`}
+                  >
+                    <span className="opacity-95">{tab.icon}</span>
+                    <span className="text-[14px] md:text-[16px] font-bold tracking-wide">{tab.label}</span>
+                  </button>
+                )
+              })}
+            </nav>
           </div>
         </header>
 
-        <div className="flex-1 min-h-0 px-3 pb-2">
-          <div className="surface-panel h-full rounded-[26px] overflow-hidden">
+        <main className="flex-1 min-h-0 pt-2 md:pt-3 pb-[max(0.45rem,env(safe-area-inset-bottom))]">
+          <div className="surface-panel h-full rounded-[1.5rem] overflow-hidden">
             <div className={activeTab === 'diary' ? 'h-full' : 'hidden'}>
               <DiaryTab />
             </div>
@@ -73,32 +98,7 @@ export default function Main() {
               <VideoTab />
             </div>
           </div>
-        </div>
-
-        <footer className="shrink-0 px-4 pt-1 pb-[max(0.7rem,env(safe-area-inset-bottom))]">
-          <div className="surface-panel-strong rounded-2xl p-1.5 flex items-center justify-between">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.id
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl transition-all ${
-                    isActive
-                      ? 'text-[var(--accent)]'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-strong)]'
-                  }`}
-                >
-                  {isActive && (
-                    <span className="absolute inset-0 rounded-xl bg-[var(--accent-soft)] border border-[rgba(200,122,55,0.25)]" />
-                  )}
-                  <span className="relative z-10">{tab.icon}</span>
-                  <span className="relative z-10 text-[10px] font-semibold tracking-wide">{tab.label}</span>
-                </button>
-              )
-            })}
-          </div>
-        </footer>
+        </main>
       </div>
     </div>
   )

@@ -7,6 +7,21 @@ const headers = () => ({
   'Content-Type': 'application/json',
 })
 
+async function readErrorMessage(res: Response, fallback: string): Promise<string> {
+  const contentType = res.headers.get('content-type') || ''
+  if (contentType.includes('application/json')) {
+    const data = await res.json().catch(() => null)
+    const msg = data?.message
+    if (Array.isArray(msg)) return msg.join('; ')
+    if (typeof msg === 'string' && msg.trim()) return msg.trim()
+    if (typeof data?.error === 'string' && data.error.trim()) return data.error.trim()
+  } else {
+    const text = await res.text().catch(() => '')
+    if (text.trim()) return text.trim()
+  }
+  return `${fallback} (${res.status})`
+}
+
 // ===== Storage =====
 
 export interface OSSObject {
@@ -131,6 +146,8 @@ export async function getMyRecords(): Promise<Clip[]> {
 export interface CinemaResult {
   hourBucket?: string
   requestId?: string
+  providerStatus?: string
+  queuePosition?: number | null
   selectedImage?: string
   selectedImageAt?: string
   prompt?: string
@@ -144,7 +161,7 @@ export interface CinemaResult {
 export interface CinemaRecord {
   id: string
   userId: number
-  type: 'cinema-hourly'
+  type: 'cinema-hourly' | 'cinema-manual'
   status: 'processing' | 'generating' | 'completed' | 'failed'
   provider?: string
   date: string
@@ -164,6 +181,21 @@ export async function triggerCinemaHourly(): Promise<TriggerCinemaResponse> {
     method: 'POST',
     headers: headers(),
   })
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, '触发小时短片失败'))
+  }
+  return res.json()
+}
+
+export async function triggerCinemaManual(selectedImage: string): Promise<TriggerCinemaResponse> {
+  const res = await fetch(`${BASE}/record/cinema/trigger-manual`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({ selectedImage }),
+  })
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, '手动图生视频失败'))
+  }
   return res.json()
 }
 
@@ -171,6 +203,9 @@ export async function getCinemaRecords(limit = 12): Promise<CinemaRecord[]> {
   const res = await fetch(`${BASE}/record/cinema/list?limit=${limit}`, {
     headers: headers(),
   })
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, '获取 Cinema 记录失败'))
+  }
   return res.json()
 }
 

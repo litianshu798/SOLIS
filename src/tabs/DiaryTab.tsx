@@ -50,25 +50,25 @@ export default function DiaryTab() {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="shrink-0 px-4 py-3 border-b border-[var(--line)] bg-white/55 backdrop-blur-sm">
+      <header className="shrink-0 px-4 md:px-6 py-3.5 border-b border-[var(--line)] bg-white/55 backdrop-blur-sm">
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={() => setDate(shiftDate(date, -1))}
-            className="w-9 h-9 rounded-full chip flex items-center justify-center hover:text-[var(--text-strong)] transition-colors"
+            className="icon-btn"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <div className="text-center">
-            <div className="font-serif text-[1.45rem] text-[var(--text-strong)] leading-none">{formatDate(date)}</div>
-            <div className="mt-1 text-[11px] text-[var(--text-muted)]">
+            <div className="font-serif text-[1.45rem] md:text-[1.8rem] text-[var(--text-strong)] leading-none">{formatDate(date)}</div>
+            <div className="mt-1.5 text-[13px] font-semibold text-[var(--text-muted)]">
               {images.length} photos · {audios.length} recordings
             </div>
           </div>
           <button
             onClick={() => setDate(shiftDate(date, 1))}
-            className="w-9 h-9 rounded-full chip flex items-center justify-center hover:text-[var(--text-strong)] transition-colors"
+            className="icon-btn"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -77,7 +77,7 @@ export default function DiaryTab() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
         {isLoading ? (
           <div className="h-48 flex flex-col items-center justify-center text-[var(--text-muted)]">
             <div className="w-7 h-7 border-2 border-[rgba(109,88,67,0.15)] border-t-[var(--accent)] rounded-full animate-spin" />
@@ -118,7 +118,7 @@ export default function DiaryTab() {
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="w-full rounded-full py-3.5 bg-[var(--text-strong)] text-white font-semibold shadow-lg shadow-black/15 disabled:opacity-45 transition-all hover:-translate-y-0.5"
+              className="cta-btn"
             >
               {generating ? 'Submitting...' : 'Generate AI Diary'}
             </button>
@@ -157,7 +157,7 @@ function TimelineRow({ item, index, onImageClick }: { item: TimelineItem; index:
       {item.type === 'image' ? (
         <button
           onClick={() => onImageClick(getFileUrl(item.obj))}
-          className="group flex-1 max-w-[240px] rounded-2xl overflow-hidden border border-white/70 shadow-md shadow-black/5"
+          className="group flex-1 max-w-[min(100%,420px)] rounded-2xl overflow-hidden border border-white/70 shadow-md shadow-black/5"
         >
           <img
             src={getFileUrl(item.obj)}
@@ -198,7 +198,7 @@ function AudioCard({ obj }: { obj: OSSObject }) {
   const durationEstimate = Math.max(1, Math.round(sizeKB / 32))
 
   return (
-    <div className="flex-1 max-w-[250px]">
+    <div className="flex-1 max-w-[min(100%,420px)]">
       <div className="surface-panel rounded-2xl px-3.5 py-3 flex items-center gap-3">
         <button
           onClick={toggle}

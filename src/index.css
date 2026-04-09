@@ -1,19 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --bg-base: #f2ebe1;
-  --bg-soft: #f8f3ea;
-  --surface: rgba(255, 255, 255, 0.76);
-  --surface-strong: rgba(255, 255, 255, 0.92);
-  --text-strong: #30291f;
-  --text-muted: #7b7062;
-  --line: rgba(109, 88, 67, 0.18);
-  --accent: #d77935;
-  --accent-soft: #f8e3cf;
-  --success: #2f9c67;
-  --shadow-soft: 0 10px 35px rgba(69, 43, 24, 0.08);
-  --shadow-focus: 0 18px 45px rgba(69, 43, 24, 0.12);
+  --bg-base: #edf2f9;
+  --bg-soft: #f6f8fc;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.93);
+  --text-strong: #17233a;
+  --text-muted: #60718f;
+  --line: rgba(77, 103, 144, 0.2);
+  --accent: #2f6df6;
+  --accent-soft: #e5eeff;
+  --success: #22a56b;
+  --shadow-soft: 0 14px 40px rgba(23, 35, 58, 0.08);
+  --shadow-focus: 0 22px 54px rgba(23, 35, 58, 0.14);
 }
 
 * {
@@ -30,16 +30,16 @@ html, body, #root {
 
 body {
   background:
-    radial-gradient(circle at 10% 8%, rgba(221, 166, 117, 0.15), transparent 32%),
-    radial-gradient(circle at 86% 18%, rgba(234, 205, 173, 0.32), transparent 36%),
-    linear-gradient(165deg, #f9f4eb 0%, var(--bg-base) 100%);
+    radial-gradient(circle at 8% 8%, rgba(65, 122, 255, 0.22), transparent 30%),
+    radial-gradient(circle at 90% 12%, rgba(73, 209, 172, 0.16), transparent 34%),
+    linear-gradient(165deg, #f8fbff 0%, var(--bg-base) 100%);
   color: var(--text-strong);
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 .font-serif {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
 }
 
 .surface-panel {
@@ -58,14 +58,169 @@ body {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.62);
   color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .section-label {
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  font-size: 0.84rem;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.app-shell {
+  height: 100%;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 0.75rem;
+}
+
+.nav-pill {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--text-muted);
+  transition: all 0.24s ease;
+  min-height: 3.25rem;
+}
+
+.nav-pill:hover {
+  color: var(--text-strong);
+  border-color: rgba(48, 95, 210, 0.35);
+  transform: translateY(-1px);
+}
+
+.nav-pill-active {
+  color: #fff;
+  border-color: rgba(27, 74, 191, 0.5);
+  background: linear-gradient(135deg, #3f79f7 0%, #255fe4 58%, #1e54cc 100%);
+  box-shadow: 0 10px 24px rgba(41, 91, 217, 0.35);
+}
+
+.cta-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 1rem 1.55rem;
+  font-size: 1.03rem;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  color: #fff;
+  background: linear-gradient(135deg, #3f79f7 0%, #255fe4 58%, #1e54cc 100%);
+  box-shadow: 0 14px 30px rgba(41, 91, 217, 0.33);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(41, 91, 217, 0.4);
+}
+
+.cta-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cta-btn-secondary {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1rem 1.55rem;
+  font-size: 1.03rem;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  color: var(--text-strong);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cta-btn-secondary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(48, 95, 210, 0.35);
+}
+
+.icon-btn {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  color: var(--text-strong);
+  border-color: rgba(48, 95, 210, 0.35);
+}
+
+.chat-bubble-ai {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-strong);
+  border-radius: 1rem;
+}
+
+.chat-bubble-user {
+  background: linear-gradient(135deg, #344a77 0%, #273657 100%);
+  color: #fff;
+  border-radius: 1rem;
+}
+
+.chat-composer {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.composer-send {
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.9rem;
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #3f79f7 0%, #255fe4 58%, #1e54cc 100%);
+  box-shadow: 0 10px 24px rgba(41, 91, 217, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.composer-send:hover {
+  transform: translateY(-1px);
+}
+
+.composer-send:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 767px) {
+  .app-shell {
+    padding: 0.45rem;
+  }
+
+  .section-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+  }
+
+  .cta-btn,
+  .cta-btn-secondary {
+    font-size: 0.98rem;
+  }
 }
 
 ::-webkit-scrollbar { width: 4px; }

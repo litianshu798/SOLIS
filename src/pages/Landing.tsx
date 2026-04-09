@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { listFiles, classifyFiles, getFileUrl, todayStr, formatDate } from '../api'
+import solisLogo from '../assets/solis-logo.svg'
 
 interface Props {
   onStart: () => void
@@ -75,25 +76,28 @@ export default function Landing({ onStart }: Props) {
             transform: show ? 'translateY(0)' : 'translateY(34px)',
           }}
         >
-          <div className="section-label mb-5">Vibeverse Journal</div>
-          <h1 className="font-serif text-[2.45rem] sm:text-6xl leading-[1] font-semibold text-[var(--text-strong)] tracking-tight">
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <img src={solisLogo} alt="Solis logo" className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl shadow-md shadow-black/15 object-cover" />
+            <div className="section-label">Solis Memory Cinema</div>
+          </div>
+          <h1 className="font-serif text-[2.65rem] sm:text-7xl leading-[0.95] font-semibold text-[var(--text-strong)] tracking-tight">
             Direct Your Day.
             <br />
             <span className="italic">Cut It Like Cinema.</span>
           </h1>
-          <p className="mt-5 text-[0.95rem] sm:text-base leading-relaxed text-[var(--text-muted)] max-w-xl mx-auto">
+          <p className="mt-5 text-[1.02rem] sm:text-[1.16rem] leading-relaxed text-[var(--text-muted)] max-w-2xl mx-auto">
             Wearable capture feeds your private timeline.
             AI turns moments, voices, and photos into a cinematic memory draft.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <button
               onClick={handleStart}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[var(--text-strong)] text-white font-semibold hover:opacity-95 transition-all hover:-translate-y-0.5 shadow-lg shadow-black/15"
+              className="w-full sm:w-auto cta-btn sm:min-w-[250px]"
             >
-              Enter Timeline
+              Enter Solis
             </button>
-            <button className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--line)] text-[var(--text-muted)] font-semibold hover:text-[var(--text-strong)] hover:border-[rgba(109,88,67,0.34)] transition-all bg-white/60">
+            <button className="w-full sm:w-auto cta-btn-secondary sm:min-w-[250px]">
               Product Story
             </button>
           </div>
@@ -123,9 +127,9 @@ export default function Landing({ onStart }: Props) {
 
 function StatChip({ label, value, live = false }: { label: string; value: string; live?: boolean }) {
   return (
-    <div className="chip rounded-2xl px-3.5 py-3 sm:px-4 text-left">
-      <div className="text-[10px] uppercase tracking-[0.14em] font-semibold opacity-75">{label}</div>
-      <div className="mt-1 flex items-center gap-1.5 text-sm sm:text-[0.95rem] font-semibold text-[var(--text-strong)]">
+    <div className="chip rounded-2xl px-4 py-3.5 sm:px-5 text-left">
+      <div className="text-[12px] uppercase tracking-[0.13em] font-bold opacity-75">{label}</div>
+      <div className="mt-1.5 flex items-center gap-1.5 text-[1rem] sm:text-[1.08rem] font-bold text-[var(--text-strong)]">
         {live && <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]" style={{ animation: 'breathe 2s ease-in-out infinite' }} />}
         <span className="truncate">{value}</span>
       </div>

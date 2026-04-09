@@ -18,7 +18,7 @@ export default function QATab() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'ai',
-      text: 'I can read your captures and diary memory. Ask me for highlights, mood changes, or context around any moment.',
+      text: 'I can read your captures and diary memory. Ask me about highlights, mood changes, or any moment context.',
       time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
     },
   ])
@@ -77,93 +77,104 @@ export default function QATab() {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="shrink-0 px-4 py-3 border-b border-[var(--line)] bg-white/55 backdrop-blur-sm">
-        <div className="section-label">Memory Assistant</div>
-        <div className="mt-1.5 flex items-center justify-between gap-2">
-          <h2 className="font-serif text-[1.7rem] leading-none text-[var(--text-strong)]">Ask Your Day</h2>
-          <div className="chip rounded-full px-2.5 py-1 text-[11px] font-semibold">
+      <header className="shrink-0 px-4 md:px-6 py-3.5 border-b border-[var(--line)] bg-white/60 backdrop-blur-sm">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="section-label">Memory Assistant</div>
+            <h2 className="mt-1 font-serif text-[1.7rem] md:text-[2rem] leading-none text-[var(--text-strong)]">Ask Your Day</h2>
+          </div>
+          <div className="chip rounded-full px-3.5 py-2 text-[13px] font-bold">
             {images.length} photos · {audios.length} audio
           </div>
         </div>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {messages.map((msg, index) => (
-          <div
-            key={`${msg.time}-${index}`}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            style={{ animation: 'fadeInUp 0.35s ease-out' }}
-          >
-            <div
-              className={`max-w-[82%] px-4 py-3.5 rounded-2xl ${
-                msg.role === 'user'
-                  ? 'bg-[var(--text-strong)] text-white rounded-br-md shadow-md shadow-black/15'
-                  : 'surface-panel text-[var(--text-strong)] rounded-bl-md'
-              }`}
-            >
-              <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-              <div className={`mt-1.5 text-[10px] ${msg.role === 'user' ? 'text-white/45 text-right' : 'text-[var(--text-muted)]'}`}>
-                {msg.time}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 md:px-6 py-4 md:py-5">
+        <div className="mx-auto w-full max-w-4xl space-y-4">
+          {messages.map((msg, index) => (
+            <div key={`${msg.time}-${index}`} style={{ animation: 'fadeInUp 0.35s ease-out' }}>
+              {msg.role === 'user' ? (
+                <div className="flex justify-end">
+                  <div className="chat-bubble-user max-w-[90%] md:max-w-[72%] px-4 py-3.5 md:px-5 md:py-4 shadow-md shadow-black/20">
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                    <div className="mt-1.5 text-[11px] text-white/50 text-right">{msg.time}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2.5 md:gap-3">
+                  <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[var(--accent-soft)] border border-[rgba(47,109,246,0.22)] text-[var(--accent)] text-[11px] font-bold flex items-center justify-center shrink-0 mt-1">
+                    AI
+                  </div>
+                  <div className="chat-bubble-ai max-w-[92%] md:max-w-[78%] px-4 py-3.5 md:px-5 md:py-4">
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                    <div className="mt-1.5 text-[11px] text-[var(--text-muted)]">{msg.time}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {loading && (
+            <div className="flex items-start gap-2.5 md:gap-3">
+              <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[var(--accent-soft)] border border-[rgba(47,109,246,0.22)] text-[var(--accent)] text-[11px] font-bold flex items-center justify-center shrink-0 mt-1">
+                AI
+              </div>
+              <div className="chat-bubble-ai px-4 py-3 rounded-2xl">
+                <div className="flex gap-1.5 items-center">
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="h-2.5 w-2.5 rounded-full bg-[var(--text-muted)]/45"
+                      style={{ animation: 'typing 1.4s ease-in-out infinite', animationDelay: `${i * 0.2}s` }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )}
 
-        {loading && (
-          <div className="flex justify-start">
-            <div className="surface-panel rounded-2xl rounded-bl-md px-4 py-3">
-              <div className="flex gap-1.5 items-center">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className="h-2.5 w-2.5 rounded-full bg-[var(--text-muted)]/45"
-                    style={{ animation: 'typing 1.4s ease-in-out infinite', animationDelay: `${i * 0.2}s` }}
-                  />
-                ))}
-              </div>
+          {messages.length <= 1 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setInput(s)
+                    window.setTimeout(() => inputRef.current?.focus(), 40)
+                  }}
+                  className="text-left px-4 py-4 rounded-xl chip hover:border-[rgba(47,109,246,0.35)] transition-colors"
+                >
+                  <span className="text-base font-semibold text-[var(--text-strong)]">{s}</span>
+                </button>
+              ))}
             </div>
-          </div>
-        )}
-
-        {messages.length <= 1 && (
-          <div className="space-y-2 pt-1">
-            {suggestions.map((s) => (
-              <button
-                key={s}
-                onClick={() => {
-                  setInput(s)
-                  window.setTimeout(() => inputRef.current?.focus(), 40)
-                }}
-                className="w-full text-left px-4 py-3 rounded-xl chip hover:border-[rgba(109,88,67,0.34)] transition-colors"
-              >
-                <span className="text-sm text-[var(--text-strong)]">{s}</span>
-              </button>
-            ))}
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      <footer className="shrink-0 px-4 py-3 bg-white/60 backdrop-blur-sm border-t border-[var(--line)]">
-        <div className="surface-panel-strong rounded-2xl px-3 py-2 flex items-end gap-2.5">
-          <textarea
-            ref={inputRef}
-            rows={1}
-            value={input}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask about your memories..."
-            className="flex-1 bg-transparent outline-none resize-none text-[15px] text-[var(--text-strong)] placeholder:text-[var(--text-muted)]/70 leading-6"
-            style={{ height: '24px', maxHeight: '128px' }}
-          />
-          <button
-            onClick={send}
-            disabled={!input.trim() || loading}
-            className="w-10 h-10 rounded-xl bg-[var(--text-strong)] text-white flex items-center justify-center disabled:opacity-30 transition-all hover:-translate-y-0.5"
-          >
-            <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-5.25-5.25M19.5 12l-5.25 5.25" />
-            </svg>
-          </button>
+      <footer className="shrink-0 px-3 md:px-6 py-3.5 md:py-4 bg-white/65 backdrop-blur-sm border-t border-[var(--line)]">
+        <div className="mx-auto w-full max-w-4xl">
+          <div className="chat-composer px-3 py-2.5 md:px-4 md:py-3 flex items-end gap-2.5">
+            <textarea
+              ref={inputRef}
+              rows={1}
+              value={input}
+              onChange={handleInput}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask about your memories..."
+              className="flex-1 bg-transparent outline-none resize-none text-[15px] text-[var(--text-strong)] placeholder:text-[var(--text-muted)]/70 leading-6"
+              style={{ height: '24px', maxHeight: '128px' }}
+            />
+            <button
+              onClick={send}
+              disabled={!input.trim() || loading}
+              className="composer-send"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-5.25-5.25M19.5 12l-5.25 5.25" />
+              </svg>
+            </button>
+          </div>
         </div>
       </footer>
     </div>
