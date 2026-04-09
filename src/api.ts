@@ -1,5 +1,5 @@
 const BASE = '/api'
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVzcDMyX2NhbSIsInN1YiI6MiwiaWF0IjoxNzc1NjM1ODI2LCJleHAiOjE3NzYyNDA2MjZ9.jEzSOY3e7f3PsfnXwXt8gnvE4SWOH7Yvpv_hpbkAOSk'
+const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFuZHkiLCJzdWIiOjEsImlhdCI6MTc3NTcwMTc2OCwiZXhwIjoxNzc2MzA2NTY4fQ.lerWxFms_kH8DZGC37S87-k34FFCZRCpq_UQTBtJAnc'
 const DEVICE_UUID = 'esp32-device-001'
 
 const headers = () => ({
@@ -113,7 +113,7 @@ export interface Clip {
 }
 
 export async function generateClip(date: string): Promise<Clip> {
-  const res = await fetch(`${BASE}/record/generate`, {
+  const res = await fetch(`${BASE}/record/generateclip`, {
     method: 'POST',
     headers: headers(),
     body: JSON.stringify({ date }),
@@ -123,6 +123,52 @@ export async function generateClip(date: string): Promise<Clip> {
 
 export async function getMyRecords(): Promise<Clip[]> {
   const res = await fetch(`${BASE}/record/my-records`, {
+    headers: headers(),
+  })
+  return res.json()
+}
+
+export interface CinemaResult {
+  hourBucket?: string
+  requestId?: string
+  selectedImage?: string
+  selectedImageAt?: string
+  prompt?: string
+  videoUrl?: string
+  videoPath?: string | null
+  windowStart?: string
+  windowEnd?: string
+  error?: string
+}
+
+export interface CinemaRecord {
+  id: string
+  userId: number
+  type: 'cinema-hourly'
+  status: 'processing' | 'generating' | 'completed' | 'failed'
+  provider?: string
+  date: string
+  content?: string
+  createdAt: string
+  result?: CinemaResult
+}
+
+export interface TriggerCinemaResponse {
+  skipped: boolean
+  message?: string
+  record?: CinemaRecord
+}
+
+export async function triggerCinemaHourly(): Promise<TriggerCinemaResponse> {
+  const res = await fetch(`${BASE}/record/cinema/trigger-hourly`, {
+    method: 'POST',
+    headers: headers(),
+  })
+  return res.json()
+}
+
+export async function getCinemaRecords(limit = 12): Promise<CinemaRecord[]> {
+  const res = await fetch(`${BASE}/record/cinema/list?limit=${limit}`, {
     headers: headers(),
   })
   return res.json()
