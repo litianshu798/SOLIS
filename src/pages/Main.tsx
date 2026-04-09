@@ -47,16 +47,8 @@ export default function Main({ onGoHome }: Props) {
   const active = tabs.find((tab) => tab.id === activeTab)!
 
   return (
-    <div className="relative h-full overflow-hidden" style={{ animation: 'fadeIn 0.45s ease-out' }}>
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle at 12% 10%, rgba(93,143,255,0.24), transparent 30%), radial-gradient(circle at 84% 16%, rgba(73,199,174,0.22), transparent 34%), linear-gradient(165deg, #081724 0%, #0d1f31 48%, #11263a 100%)',
-        }}
-      />
-
-      <div className="relative z-10 app-shell flex flex-col">
+    <div className="h-full overflow-hidden bg-[var(--bg-base)] text-[var(--text-strong)]" style={{ animation: 'fadeIn 0.45s ease-out' }}>
+      <div className="app-shell flex flex-col">
         <header className="shrink-0">
           <div className="surface-panel-strong rounded-[1.6rem] px-6 py-5 md:px-8 md:py-6">
             <div className="flex flex-col items-center gap-3">
@@ -68,9 +60,14 @@ export default function Main({ onGoHome }: Props) {
                 title="Back to home"
               >
                 <img src={solisLogo} alt="Solis logo" className="w-12 h-12 md:w-14 md:h-14 rounded-xl shadow-md shadow-black/15 object-cover" />
-                <div className="text-[2.15rem] md:text-[2.7rem] font-extrabold leading-[1.32] tracking-tight text-white">Solis</div>
+                <div
+                  className="text-[2.15rem] md:text-[2.7rem] font-extrabold leading-[1.32] tracking-tight text-[#5f4a50]"
+                  style={{ fontFamily: 'Newsreader, serif' }}
+                >
+                  Solis
+                </div>
               </button>
-              <div className="chip rounded-full px-4 py-2 text-[13px] md:text-[14px] font-bold w-fit text-cyan-200">
+              <div className="chip rounded-full px-4 py-2 text-[13px] md:text-[14px] font-bold w-fit text-[#855863]">
                 Active: {active.label}
               </div>
             </div>

@@ -55,7 +55,7 @@ export default function DiaryTab({ onOpenCinema }: Props) {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="shrink-0 px-6 md:px-8 py-4 border-b border-[var(--line)] bg-white/[0.04] backdrop-blur-sm">
+      <header className="shrink-0 px-6 md:px-8 py-4 border-b border-[var(--line)] bg-[#f9f8ef]/80 backdrop-blur-sm">
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={() => setDate(shiftDate(date, -1))}
@@ -66,7 +66,12 @@ export default function DiaryTab({ onOpenCinema }: Props) {
             </svg>
           </button>
           <div className="text-center">
-            <div className="text-[1.5rem] md:text-[1.85rem] font-extrabold text-white leading-[1.32] tracking-tight">{formatDate(date)}</div>
+            <div
+              className="text-[1.5rem] md:text-[1.85rem] font-extrabold text-[var(--text-strong)] leading-[1.32] tracking-tight"
+              style={{ fontFamily: 'Newsreader, serif' }}
+            >
+              {formatDate(date)}
+            </div>
             <div className="mt-2 text-[13px] font-semibold text-[var(--text-muted)]">
               {images.length} photos · {audios.length} recordings
             </div>
@@ -85,7 +90,7 @@ export default function DiaryTab({ onOpenCinema }: Props) {
       <div className="flex-1 overflow-y-auto px-6 md:px-8 py-5">
         {isLoading ? (
           <div className="h-48 flex flex-col items-center justify-center text-[var(--text-muted)]">
-            <div className="w-7 h-7 border-2 border-[rgba(109,88,67,0.15)] border-t-[var(--accent)] rounded-full animate-spin" />
+            <div className="w-7 h-7 border-2 border-[var(--line)] border-t-[var(--accent)] rounded-full animate-spin" />
             <span className="text-xs mt-3">Loading timeline...</span>
           </div>
         ) : timeline.length === 0 ? (
@@ -172,7 +177,7 @@ function TimelineRow({ item, index, onImageClick }: { item: TimelineItem; index:
       {item.type === 'image' ? (
         <button
           onClick={() => onImageClick(getFileUrl(item.obj))}
-          className="group flex-1 max-w-[min(100%,420px)] rounded-2xl overflow-hidden border border-white/14 shadow-md shadow-black/30"
+          className="group flex-1 max-w-[min(100%,420px)] rounded-2xl overflow-hidden border border-[var(--line)] shadow-md shadow-[#3739301a]"
         >
           <img
             src={getFileUrl(item.obj)}
@@ -218,7 +223,7 @@ function AudioCard({ obj }: { obj: OSSObject }) {
         <button
           onClick={toggle}
           className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-            playing ? 'bg-cyan-400 text-[#072133]' : 'bg-cyan-400/15 text-cyan-300 hover:bg-cyan-400/25'
+            playing ? 'bg-[#6a6362] text-white' : 'bg-[#ebe0de] text-[#855863] hover:bg-[#e4d4d1]'
           }`}
         >
           {playing ? (

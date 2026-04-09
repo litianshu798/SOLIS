@@ -77,9 +77,14 @@ export default function QATab() {
 
   return (
     <div className="h-full flex flex-col">
-      <header className="shrink-0 px-6 md:px-8 py-4 border-b border-[var(--line)] bg-white/[0.04] backdrop-blur-sm">
+      <header className="shrink-0 px-6 md:px-8 py-4 border-b border-[var(--line)] bg-[#f9f8ef]/80 backdrop-blur-sm">
         <div className="flex flex-col items-center gap-2.5">
-          <h2 className="text-[1.75rem] md:text-[2.1rem] font-extrabold leading-[1.32] tracking-tight text-white text-center">Ask Your Day</h2>
+          <h2
+            className="text-[1.75rem] md:text-[2.1rem] font-extrabold leading-[1.32] tracking-tight text-[var(--text-strong)] text-center"
+            style={{ fontFamily: 'Newsreader, serif' }}
+          >
+            Ask Your Day
+          </h2>
           <div className="chip rounded-full px-3.5 py-2 text-[13px] font-bold">
             {images.length} photos · {audios.length} audio
           </div>
@@ -94,12 +99,12 @@ export default function QATab() {
                 <div className="flex justify-end">
                   <div className="chat-bubble-user max-w-[90%] md:max-w-[72%] px-5 py-4 md:px-6 md:py-5 shadow-md shadow-black/30">
                     <p className="text-[15px] leading-[2.0] whitespace-pre-wrap">{msg.text}</p>
-                    <div className="mt-1.5 text-[11px] text-white/50 text-right">{msg.time}</div>
+                    <div className="mt-1.5 text-[11px] text-[#7b6c70] text-right">{msg.time}</div>
                   </div>
                 </div>
               ) : (
                 <div className="flex items-start gap-2.5 md:gap-3">
-                  <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-cyan-400/15 border border-cyan-400/25 text-cyan-300 text-[11px] font-bold flex items-center justify-center shrink-0 mt-1">
+                  <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[#ebe0de] border border-[#d9c7cb] text-[#855863] text-[11px] font-bold flex items-center justify-center shrink-0 mt-1">
                     AI
                   </div>
                   <div className="chat-bubble-ai max-w-[92%] md:max-w-[78%] px-5 py-4 md:px-6 md:py-5">
@@ -113,7 +118,7 @@ export default function QATab() {
 
           {loading && (
             <div className="flex items-start gap-2.5 md:gap-3">
-              <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-cyan-400/15 border border-cyan-400/25 text-cyan-300 text-[11px] font-bold flex items-center justify-center shrink-0 mt-1">
+              <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[#ebe0de] border border-[#d9c7cb] text-[#855863] text-[11px] font-bold flex items-center justify-center shrink-0 mt-1">
                 AI
               </div>
               <div className="chat-bubble-ai px-4 py-3 rounded-2xl">
@@ -139,7 +144,7 @@ export default function QATab() {
                     setInput(s)
                     window.setTimeout(() => inputRef.current?.focus(), 40)
                   }}
-                  className="text-left px-5 py-5 rounded-xl chip hover:border-cyan-400/35 transition-colors"
+                  className="text-left px-5 py-5 rounded-xl chip hover:border-[#c9a9b1] transition-colors"
                 >
                   <span className="text-base font-semibold text-[var(--text-strong)]">{s}</span>
                 </button>
@@ -149,7 +154,7 @@ export default function QATab() {
         </div>
       </div>
 
-      <footer className="shrink-0 px-5 md:px-8 py-4 md:py-5 bg-white/[0.04] backdrop-blur-sm border-t border-[var(--line)]">
+      <footer className="shrink-0 px-5 md:px-8 py-4 md:py-5 bg-[#f9f8ef]/80 backdrop-blur-sm border-t border-[var(--line)]">
         <div className="mx-auto w-full max-w-4xl">
           <div className="chat-composer px-4 py-3 md:px-5 md:py-3.5 flex items-end gap-3">
             <textarea
